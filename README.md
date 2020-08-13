@@ -10,19 +10,20 @@ pip install google-services-api
 
 [Link to the python package page](https://pypi.org/project/google-services-api/)
 
-## Quick start
+## Scrape Google Maps/Places
 
 ```python
 from outscraper import ApiClient
+
 api_cliet = ApiClient(api_key='SECRET_API_KEY')
 maps_result = api_cliet.google_maps_search('restaurants brooklyn usa')
-search_result = api_cliet.google_search('bitcoin')
 ```
 
-## Get business reviews
+## Scrape Google Places Reviews
 
 ```python
 from outscraper import ApiClient
+
 api_cliet = ApiClient(api_key='SECRET_API_KEY')
 business_with_reviews = api_cliet.google_maps_business_reviews(
     'Memphis Seoul brooklyn usa', limit=100, language='en')
