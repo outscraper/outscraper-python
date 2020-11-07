@@ -17,7 +17,7 @@ class ApiClient(object):
     _api_url = 'https://api.app.outscraper.com'
     _api_key = None
 
-    _max_ttl = 60 * 5
+    _max_ttl = 60 * 10
 
     def __init__(self, api_key):
         self._api_key = api_key
@@ -43,37 +43,39 @@ class ApiClient(object):
 
             sleep(requests_pause)
 
+        raise Exception('Timeout exceeded')
+
     def google_search(self, query, language='en', region='us'):
         response = requests.get(f'{self._api_url}/search', params={
-            'apiKey': self._api_key,
-            'async': True,
             'query': query,
             'language': language,
             'region': region,
-        })
+        }, headers={'X-API-KEY': self._api_key})
 
-        sleep(10)
-        return self._wait_request_archive(response.json()['id'], 2)
+        if 199 < response.status_code < 300:
+            sleep(10)
+            return self._wait_request_archive(response.json()['id'], 2)
+
+        raise Exception(f'Server response code: {response.status_code}')
 
     def google_maps_search(self, query, language='en', region='us', limit=400, extract_contacts=False, coordinates=None):
         response = requests.get(f'{self._api_url}/maps/search', params={
-            'apiKey': self._api_key,
-            'async': True,
             'query': query,
             'coordinates': coordinates,
             'language': language,
             'region': region,
             'organizationsPerQueryLimit': limit,
             'extractContacts': extract_contacts,
-        })
+        }, headers={'X-API-KEY': self._api_key})
 
-        sleep(15)
-        return self._wait_request_archive(response.json()['id'], 5)
+        if 199 < response.status_code < 300:
+            sleep(15)
+            return self._wait_request_archive(response.json()['id'], 5)
+
+        raise Exception(f'Server response code: {response.status_code}')
 
     def google_maps_business_reviews(self, query, language='en', region='us', limit=100, cutoff=None, coordinates=None):
         response = requests.get(f'{self._api_url}/maps/reviews', params={
-            'apiKey': self._api_key,
-            'async': True,
             'query': query,
             'coordinates': coordinates,
             'language': language,
@@ -81,7 +83,10 @@ class ApiClient(object):
             'limit': 1,
             'cutoff': cutoff,
             'reviewsPerOrganizationLimit': limit
-        })
+        }, headers={'X-API-KEY': self._api_key})
 
-        sleep(30)
-        return self._wait_request_archive(response.json()['id'], 5).get('data', [])
+        if 199 < response.status_code < 300:
+            sleep(30)
+            return self._wait_request_archive(response.json()['id'], 5).get('data', [])
+
+        raise Exception(f'Server response code: {response.status_code}')
