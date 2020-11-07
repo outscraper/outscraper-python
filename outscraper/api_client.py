@@ -4,7 +4,7 @@ from time import sleep
 
 
 class ApiClient(object):
-    """OutScraperApiClient - Python sdk that allows extracting data from Google services via OutScraper API.
+    """OutScraper ApiClient - Python SDK that allows extracting data from Google services via OutScraper API.
     ```python
     from outscraper import ApiClient
     api_cliet = ApiClient(api_key='SECRET_API_KEY')
@@ -30,7 +30,11 @@ class ApiClient(object):
             dict: result from the archive
         """
         response = requests.get(f'{self._api_url}/requests/{request_id}')
-        return response.json()
+
+        if 199 < response.status_code < 300:
+            return response.json()
+
+        raise Exception(f'Response status code: {response.status_code}')
 
     def _wait_request_archive(self, request_id, requests_pause):
         ttl = self._max_ttl / requests_pause
@@ -56,7 +60,7 @@ class ApiClient(object):
             sleep(10)
             return self._wait_request_archive(response.json()['id'], 2)
 
-        raise Exception(f'Server response code: {response.status_code}')
+        raise Exception(f'Response status code: {response.status_code}')
 
     def google_maps_search(self, query, language='en', region='us', limit=400, extract_contacts=False, coordinates=None):
         response = requests.get(f'{self._api_url}/maps/search', params={
@@ -72,9 +76,9 @@ class ApiClient(object):
             sleep(15)
             return self._wait_request_archive(response.json()['id'], 5)
 
-        raise Exception(f'Server response code: {response.status_code}')
+        raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_business_reviews(self, query, language='en', region='us', limit=100, cutoff=None, coordinates=None):
+    def google_maps_business_reviews(self, query, language='en', region='us', limit=100, cutoff=None, coordinates=None, sort='most_relevant', cutoff_rating=None):
         response = requests.get(f'{self._api_url}/maps/reviews', params={
             'query': query,
             'coordinates': coordinates,
@@ -82,11 +86,13 @@ class ApiClient(object):
             'region': region,
             'limit': 1,
             'cutoff': cutoff,
-            'reviewsPerOrganizationLimit': limit
+            'cutoffRating': cutoff_rating,
+            'reviewsPerOrganizationLimit': limit,
+            'sort': sort,
         }, headers={'X-API-KEY': self._api_key})
 
         if 199 < response.status_code < 300:
             sleep(30)
             return self._wait_request_archive(response.json()['id'], 5).get('data', [])
 
-        raise Exception(f'Server response code: {response.status_code}')
+        raise Exception(f'Response status code: {response.status_code}')
