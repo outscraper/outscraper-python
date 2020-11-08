@@ -1,6 +1,9 @@
 from setuptools import setup
 
 
+from outscraper import VERSION
+
+
 def readme():
     with open('README.rst') as f:
         return f.read()
@@ -8,7 +11,7 @@ def readme():
 
 setup(
     name='google-services-api',
-    version='0.0.6',
+    version=VERSION,
     description='Google services extractor by OutScraper API',
     long_description=readme(),
     classifiers = ['Programming Language :: Python',
