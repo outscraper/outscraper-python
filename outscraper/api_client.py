@@ -5,7 +5,7 @@ from time import sleep
 from .utils import as_list
 
 
-VERSION = '0.0.7'
+VERSION = '0.0.8'
 
 
 class ApiClient(object):
@@ -134,7 +134,7 @@ class ApiClient(object):
                     Returns:
                             dict: json result
         '''
-        response = requests.get(f'{self._api_url}/maps/reviews', params={
+        response = requests.get(f'{self._api_url}/maps/reviews-v2', params={
             'query': as_list(query),
             'coordinates': coordinates,
             'language': language,
