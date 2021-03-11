@@ -59,7 +59,7 @@ class ApiClient(object):
 
         raise Exception('Timeout exceeded')
 
-    def google_search(self, query: list | str, language: str = 'en', region: str = None) -> dict:
+    def google_search(self, query: list, language: str = 'en', region: str = None) -> dict:
         '''
             Get data from Google search
 
@@ -83,7 +83,7 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_search(self, query: list | str, language: str = 'en', region: str = None, limit: int = 400,
+    def google_maps_search(self, query: list, language: str = 'en', region: str = None, limit: int = 400,
         extract_contacts: bool = False, coordinates: str = None, drop_duplicates: bool = False
     ) -> dict:
         '''
@@ -117,7 +117,7 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_business_reviews(self, query: list | str, language: str = 'en', region: str = None,
+    def google_maps_business_reviews(self, query: list, language: str = 'en', region: str = None,
         limit: int = 100, cutoff: int = None, coordinates: str = None, sort: str = 'most_relevant',
         cutoff_rating: int = None, organizations_per_query_limit: int = 1
     ) -> dict:
