@@ -1,8 +1,5 @@
-# Google services API in Python
-Python SDK that allows extracting data from the following Google services via [OutScraper API](https://outscraper.com):
-
-- Google Places scraper
-- Google Reviews scraper
+# Google Maps scraper in Python
+Python SDK that allows scraping Google Maps and Google Reviews via [OutScraper API](https://outscraper.com).
 
 ## Installation
 
