@@ -162,8 +162,8 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_business_reviews(self, **kwargs) -> dict: # deprecated
-        return self.google_maps_reviews(**kwargs)
+    def google_maps_business_reviews(self, *args, **kwargs) -> dict: # deprecated
+        return self.google_maps_reviews(*args, **kwargs)
 
     def google_play_reviews(self, query: list, reviewsLimit: int = 100, sort: str = 'most_relevant', cutoff: int = None,
         rating: int = None, language: str = 'en'
