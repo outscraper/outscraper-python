@@ -3,7 +3,10 @@ Python SDK that allows scraping Google Maps, Google Reviews, Google Play Reviews
 
 - Google Maps (Places) scraper
 - Google Maps Reviews scraper
+- Google Maps Photos scraper
 - Google Play Reviews scraper
+
+[Full API Docs](https://app.outscraper.com/api-docs)
 
 ## Installation
 
@@ -24,7 +27,39 @@ result = api_cliet.google_maps_search(
     'restaurants brooklyn usa', limit=20, language='en')
 ```
 
-response:
+## Scrape Google Maps Reviews
+
+```python
+from outscraper import ApiClient
+
+api_cliet = ApiClient(api_key='SECRET_API_KEY')
+result = api_cliet.google_maps_reviews(
+    'Memphis Seoul brooklyn usa', reviewsLimit=20, language='en')
+```
+
+## Scrape Google Maps Photos
+
+```python
+from outscraper import ApiClient
+
+api_cliet = ApiClient(api_key='SECRET_API_KEY')
+result = api_cliet.google_maps_photos(
+    'Trump Tower, NY, USA', photosLimit=20, language='en')
+```
+
+## Scrape Google Play Reviews
+
+```python
+from outscraper import ApiClient
+
+api_cliet = ApiClient(api_key='SECRET_API_KEY')
+result = api_cliet.google_play_reviews(
+    'com.facebook.katana', reviewsLimit=20, language='en')
+```
+
+## Responses examples
+
+Google Maps (Places) response example:
 ```json
 [
   [
@@ -381,17 +416,8 @@ response:
 ]
 ```
 
-## Scrape Google Places Reviews
 
-```python
-from outscraper import ApiClient
-
-api_cliet = ApiClient(api_key='SECRET_API_KEY')
-result = api_cliet.google_maps_reviews(
-    'Memphis Seoul brooklyn usa', reviewsLimit=20, language='en')
-```
-
-response:
+Google Maps Reviews response example:
 ```json
 {
   "name": "Memphis Seoul",
@@ -451,17 +477,8 @@ response:
 }
 ```
 
-## Scrape Google Play Reviews
 
-```python
-from outscraper import ApiClient
-
-api_cliet = ApiClient(api_key='SECRET_API_KEY')
-result = api_cliet.google_play_reviews(
-    'com.facebook.katana', reviewsLimit=20, language='en')
-```
-
-response:
+Google Play Reviews response example:
 ```json
 [
   [
