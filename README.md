@@ -22,8 +22,8 @@ pip install google-services-api
 ```python
 from outscraper import ApiClient
 
-api_cliet = ApiClient(api_key='SECRET_API_KEY')
-result = api_cliet.google_maps_search(
+api_client = ApiClient(api_key='SECRET_API_KEY')
+result = api_client.google_maps_search(
     'restaurants brooklyn usa', limit=20, language='en')
 ```
 
@@ -32,8 +32,8 @@ result = api_cliet.google_maps_search(
 ```python
 from outscraper import ApiClient
 
-api_cliet = ApiClient(api_key='SECRET_API_KEY')
-result = api_cliet.google_maps_reviews(
+api_client = ApiClient(api_key='SECRET_API_KEY')
+result = api_client.google_maps_reviews(
     'Memphis Seoul brooklyn usa', reviewsLimit=20, language='en')
 ```
 
@@ -42,8 +42,8 @@ result = api_cliet.google_maps_reviews(
 ```python
 from outscraper import ApiClient
 
-api_cliet = ApiClient(api_key='SECRET_API_KEY')
-result = api_cliet.google_maps_photos(
+api_client = ApiClient(api_key='SECRET_API_KEY')
+result = api_client.google_maps_photos(
     'Trump Tower, NY, USA', photosLimit=20, language='en')
 ```
 
@@ -52,8 +52,8 @@ result = api_cliet.google_maps_photos(
 ```python
 from outscraper import ApiClient
 
-api_cliet = ApiClient(api_key='SECRET_API_KEY')
-result = api_cliet.google_play_reviews(
+api_client = ApiClient(api_key='SECRET_API_KEY')
+result = api_client.google_play_reviews(
     'com.facebook.katana', reviewsLimit=20, language='en')
 ```
 
