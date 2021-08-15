@@ -23,8 +23,19 @@ pip install google-services-api
 from outscraper import ApiClient
 
 api_client = ApiClient(api_key='SECRET_API_KEY')
-result = api_client.google_maps_search(
-    'restaurants brooklyn usa', limit=20, language='en')
+
+# Search for businesses in specific locations:
+result = api_client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
+
+# Get data of the specific place by id
+result = api_client.google_maps_search('ChIJrc9T9fpYwokRdvjYRHT8nI4', language='en')
+
+# Search with many queries (batching)
+result = api_client.google_maps_search([
+    'restaurants brooklyn usa',
+    'bars brooklyn usa',
+], language='en')
+
 ```
 
 ## Scrape Google Maps Reviews
@@ -33,8 +44,19 @@ result = api_client.google_maps_search(
 from outscraper import ApiClient
 
 api_client = ApiClient(api_key='SECRET_API_KEY')
+
+# Get reviews of the specific place by id
+result = api_client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviewsLimit=20, language='en')
+
+# Get reviews for places found by search query
+result = api_client.google_maps_reviews('Memphis Seoul brooklyn usa', reviewsLimit=20, limit=500, language='en')
+
+# Get only new reviews during last 24 hours
+from datetime import datetime, timedelta
+yesterday_timestamp = int((datetime.now() - timedelta(1)).timestamp())
+
 result = api_client.google_maps_reviews(
-    'Memphis Seoul brooklyn usa', reviewsLimit=20, language='en')
+    'ChIJrc9T9fpYwokRdvjYRHT8nI4', sort='newest', cutoff=yesterday_timestamp, reviewsLimit=100, language='en')
 ```
 
 ## Scrape Google Maps Photos
