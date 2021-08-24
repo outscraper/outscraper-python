@@ -112,7 +112,7 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            sleep(15)
+            sleep(10)
             return self._wait_request_archive(response.json()['id']).get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
@@ -157,7 +157,7 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            sleep(15)
+            sleep(10)
             return self._wait_request_archive(response.json()['id']).get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
@@ -188,7 +188,7 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            sleep(15)
+            sleep(10)
             return self._wait_request_archive(response.json()['id']).get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
@@ -223,7 +223,7 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            sleep(15)
+            sleep(10)
             return self._wait_request_archive(response.json()['id']).get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
