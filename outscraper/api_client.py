@@ -22,12 +22,14 @@ class ApiClient(object):
     _api_headers = {}
 
     _max_ttl = 60 * 12
+    _requests_pause = 5
 
-    def __init__(self, api_key: str) -> None:
+    def __init__(self, api_key: str, requests_pause: int = 5) -> None:
         self._api_headers = {
             'X-API-KEY': api_key,
             'client': f'Python SDK {VERSION}'
         }
+        self._requests_pause = requests_pause
 
     def get_request_archive(self, request_id: str) -> dict:
         '''
@@ -46,16 +48,16 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def _wait_request_archive(self, request_id: str, requests_pause: int = 5) -> dict:
-        ttl = self._max_ttl / requests_pause
+    def _wait_request_archive(self, request_id: str) -> dict:
+        ttl = self._max_ttl / self._requests_pause
 
         while ttl > 0:
             ttl -= 1
 
+            sleep(self._requests_pause)
+
             result = self.get_request_archive(request_id)
             if result['status'] != 'Pending': return result
-
-            sleep(requests_pause)
 
         raise Exception('Timeout exceeded')
 
@@ -78,7 +80,6 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            sleep(10)
             return self._wait_request_archive(response.json()['id'])
 
         raise Exception(f'Response status code: {response.status_code}')
@@ -112,7 +113,6 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            sleep(15)
             return self._wait_request_archive(response.json()['id']).get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
@@ -157,7 +157,6 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            sleep(15)
             return self._wait_request_archive(response.json()['id']).get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
@@ -188,7 +187,6 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            sleep(15)
             return self._wait_request_archive(response.json()['id']).get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
@@ -223,7 +221,6 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            sleep(15)
             return self._wait_request_archive(response.json()['id']).get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
