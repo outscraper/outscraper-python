@@ -1,5 +1,5 @@
 # Google Maps scraper in Python
-Python SDK that allows scraping Google Maps, Google Reviews, Google Photos, Google Play Reviews via [OutScraper API](https://outscraper.com):
+Python SDK that allows scraping Google Maps, Google Reviews, Google Photos, Google Play Reviews via [Outscraper API](https://outscraper.com):
 
 - Google Maps (Places) scraper
 - Google Maps Reviews scraper
