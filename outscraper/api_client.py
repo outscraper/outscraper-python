@@ -31,6 +31,22 @@ class ApiClient(object):
         }
         self._requests_pause = requests_pause
 
+    def get_requests_history(self) -> list:
+        '''
+            Fetch up to 100 of your last requests.
+
+                    Parameters:
+
+                    Returns:
+                            list: Requests history
+        '''
+        response = requests.get(f'{self._api_url}/requests', headers=self._api_headers)
+
+        if 199 < response.status_code < 300:
+            return response.json()
+
+        raise Exception(f'Response status code: {response.status_code}')
+
     def get_request_archive(self, request_id: str) -> dict:
         '''
             Fetch request data from archive
