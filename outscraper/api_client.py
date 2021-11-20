@@ -4,7 +4,7 @@ from time import sleep
 from .utils import as_list
 
 
-VERSION = '1.1.0'
+VERSION = '1.1.1'
 
 
 class ApiClient(object):
@@ -234,6 +234,25 @@ class ApiClient(object):
             'cutoff': cutoff,
             'rating': rating,
             'language': language,
+        }, headers=self._api_headers)
+
+        if 199 < response.status_code < 300:
+            return self._wait_request_archive(response.json()['id']).get('data', [])
+
+        raise Exception(f'Response status code: {response.status_code}')
+
+    def emails_and_contacts(self, query: list) -> list:
+        '''
+            Return email addresses, social links and phones from domains in seconds.
+
+                    Parameters:
+                            query (list | str): Domains or links (e.g., outscraper.com).
+
+                    Returns:
+                            list: json result
+        '''
+        response = requests.get(f'{self._api_url}/emails-and-contacts', params={
+            'query': as_list(query),
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:

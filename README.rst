@@ -95,6 +95,16 @@ Scrape Google Play Reviews
     result = api_client.google_play_reviews(
         'com.facebook.katana', reviewsLimit=20, language='en')
 
+Emails & Contacts Scraper
+-------------------------
+
+.. code:: python
+
+    from outscraper import ApiClient
+
+    api_client = ApiClient(api_key='SECRET_API_KEY')
+    result = api_client.emails_and_contacts(['outscraper.com'])
+
 Responses examples
 ------------------
 
@@ -337,4 +347,64 @@ Google Play Reviews response example:
         ...
       ]
     ]
+
+Emails & Contacts Scraper response example:
+
+.. code:: json
+
+    [
+        {
+          "query": "outscraper.com",
+          "domain": "outscraper.com",
+          "emails": [
+            {
+              "value": "service@outscraper.com",
+              "sources": [
+                {
+                  "ref": "https://outscraper.com/",
+                  "extracted_on": "2021-09-27T07:45:30.386000",
+                  "updated_on": "2021-11-18T12:59:15.602000"
+                },
+              ...
+              ]
+            },
+            {
+              "value": "support@outscraper.com",
+              "sources": [
+                {
+                  "ref": "https://outscraper.com/privacy-policy/",
+                  "extracted_on": "2021-11-18T12:51:39.716000",
+                  "updated_on": "2021-11-18T12:51:39.716000"
+                }
+              ]
+            }
+          ],
+          "phones": [
+            {
+              "value": "12812368208",
+              "sources": [
+                {
+                  "ref": "https://outscraper.com/",
+                  "extracted_on": "2021-11-18T12:59:15.602000",
+                  "updated_on": "2021-11-18T12:59:15.602000"
+                },
+                ...
+              ]
+            }
+          ],
+          "socials": {
+            "facebook": "https://www.facebook.com/outscraper/",
+            "github": "https://github.com/outscraper",
+            "linkedin": "https://www.linkedin.com/company/outscraper/",
+            "twitter": "https://twitter.com/outscraper",
+            "whatsapp": "https://wa.me/12812368208",
+            "youtube": "https://www.youtube.com/channel/UCDYOuXSEenLpt5tKNq-0l9Q"
+          },
+          "site_data": {
+            "description": "Scrape Google Maps Places, Business Reviews, Photos, Play Market Reviews, and more. Get any public data from the internet by applying cutting-edge technologies.",
+            "generator": "WordPress 5.8.2",
+            "title": "Outscraper - get any public data from the internet"
+          }
+        }
+      ]
 
