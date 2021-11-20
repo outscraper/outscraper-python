@@ -6,6 +6,7 @@ Python SDK that allows using [Outscraper's services](https://outscraper.com/serv
 - [Google Maps Reviews Scraper](https://outscraper.com/google-maps-reviews-scraper/)
 - [Google Maps Photos Scraper](https://outscraper.com/google-maps-photos-scraper/)
 - [Google Play Reviews Scraper](https://outscraper.com/google-maps-photos-scraper/)
+- [Emails & Contacts Scraper](https://outscraper.com/emails-scraper/)
 
 [API Docs](https://app.outscraper.com/api-docs)
 
