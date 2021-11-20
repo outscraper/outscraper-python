@@ -8,7 +8,7 @@ VERSION = '1.1.0'
 
 
 class ApiClient(object):
-    """OutScraper ApiClient - Python SDK that allows extracting data from Google services via OutScraper API.
+    """Outscraper ApiClient - Python SDK that allows using Outscraper's services and Outscraper's API.
     ```python
     from outscraper import ApiClient
     api_cliet = ApiClient(api_key='SECRET_API_KEY')
@@ -38,7 +38,7 @@ class ApiClient(object):
                     Parameters:
 
                     Returns:
-                            list: Requests history
+                            list: requests history
         '''
         response = requests.get(f'{self._api_url}/requests', headers=self._api_headers)
 
