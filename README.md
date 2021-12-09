@@ -20,13 +20,16 @@ pip install google-services-api
 
 [Link to the python package page](https://pypi.org/project/google-services-api/)
 
-## Scrape Google Maps (Places)
-
+## Initialization
 ```python
 from outscraper import ApiClient
 
 api_client = ApiClient(api_key='SECRET_API_KEY')
+```
 
+## Scrape Google Maps (Places)
+
+```python
 # Search for businesses in specific locations:
 result = api_client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
 
@@ -44,10 +47,6 @@ result = api_client.google_maps_search([
 ## Scrape Google Maps Reviews
 
 ```python
-from outscraper import ApiClient
-
-api_client = ApiClient(api_key='SECRET_API_KEY')
-
 # Get reviews of the specific place by id
 result = api_client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviewsLimit=20, language='en')
 
@@ -65,19 +64,19 @@ result = api_client.google_maps_reviews(
 ## Scrape Google Maps Photos
 
 ```python
-from outscraper import ApiClient
-
-api_client = ApiClient(api_key='SECRET_API_KEY')
 result = api_client.google_maps_photos(
     'Trump Tower, NY, USA', photosLimit=20, language='en')
+```
+
+## Scrape Google Maps Directions
+
+```python
+result = api_client.google_maps_directions(['29.696596, 76.994928    30.7159662444353, 76.8053887016268', '29.696596, 76.994928    30.723065, 76.770169'])
 ```
 
 ## Scrape Google Play Reviews
 
 ```python
-from outscraper import ApiClient
-
-api_client = ApiClient(api_key='SECRET_API_KEY')
 result = api_client.google_play_reviews(
     'com.facebook.katana', reviewsLimit=20, language='en')
 ```
@@ -85,9 +84,6 @@ result = api_client.google_play_reviews(
 ## Emails & Contacts Scraper
 
 ```python
-from outscraper import ApiClient
-
-api_client = ApiClient(api_key='SECRET_API_KEY')
 result = api_client.emails_and_contacts(['outscraper.com'])
 ```
 
