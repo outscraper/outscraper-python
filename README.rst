@@ -13,6 +13,8 @@ List of Supported Services
    Scraper <https://outscraper.com/google-maps-reviews-scraper/>`__
 -  `Google Maps Photos
    Scraper <https://outscraper.com/google-maps-photos-scraper/>`__
+-  `Google Maps Directions
+   Scraper <https://outscraper.com/google-maps-traffic-extractor/>`__
 -  `Google Play Reviews
    Scraper <https://outscraper.com/google-maps-photos-scraper/>`__
 
