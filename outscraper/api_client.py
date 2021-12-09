@@ -4,7 +4,7 @@ from time import sleep
 from .utils import as_list
 
 
-VERSION = '1.3.0'
+VERSION = '1.3.1'
 
 
 class ApiClient(object):
@@ -171,7 +171,7 @@ class ApiClient(object):
         raise Exception(f'Response status code: {response.status_code}')
 
     def google_maps_directions(self, query: list, departure_time: int = None, finish_time: int = None, interval: int = 60,
-        language: str = 'en', region: str = None
+        language: str = 'en', region: str = None, async_request: bool = False
     ) -> list:
         '''
             Get Google Maps Directions
@@ -195,9 +195,13 @@ class ApiClient(object):
             'finish_time': finish_time,
             'language': language,
             'region': region,
+            'async': async_request,
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
+            if async_request:
+                return response.json()
+
             return self._wait_request_archive(response.json()['id']).get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
