@@ -21,7 +21,7 @@ class ApiClient(object):
     _api_url = 'https://api.app.outscraper.com'
     _api_headers = {}
 
-    _max_ttl = 60 * 12
+    _max_ttl = 60 * 20
     _requests_pause = 5
 
     def __init__(self, api_key: str, requests_pause: int = 5) -> None:
@@ -72,7 +72,12 @@ class ApiClient(object):
 
             sleep(self._requests_pause)
 
-            result = self.get_request_archive(request_id)
+            try:
+                result = self.get_request_archive(request_id)
+            except:
+                sleep(self._requests_pause)
+                result = self.get_request_archive(request_id)
+
             if result['status'] != 'Pending': return result
 
         raise Exception('Timeout exceeded')
