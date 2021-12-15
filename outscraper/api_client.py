@@ -4,7 +4,7 @@ from time import sleep
 from .utils import as_list
 
 
-VERSION = '1.3.1'
+VERSION = '1.3.2'
 
 
 class ApiClient(object):
