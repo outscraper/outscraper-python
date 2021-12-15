@@ -21,7 +21,7 @@ class ApiClient(object):
     _api_url = 'https://api.app.outscraper.com'
     _api_headers = {}
 
-    _max_ttl = 60 * 20
+    _max_ttl = 60 * 60
     _requests_pause = 5
 
     def __init__(self, api_key: str, requests_pause: int = 5) -> None:
