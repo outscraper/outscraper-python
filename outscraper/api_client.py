@@ -4,9 +4,6 @@ from time import sleep
 from .utils import as_list
 
 
-VERSION = '1.3.2'
-
-
 class ApiClient(object):
     """Outscraper ApiClient - Python SDK that allows using Outscraper's services and Outscraper's API.
     ```python
@@ -27,7 +24,7 @@ class ApiClient(object):
     def __init__(self, api_key: str, requests_pause: int = 5) -> None:
         self._api_headers = {
             'X-API-KEY': api_key,
-            'client': f'Python SDK {VERSION}'
+            'client': f'Python SDK'
         }
         self._requests_pause = requests_pause
 

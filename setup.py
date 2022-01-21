@@ -1,9 +1,6 @@
 from setuptools import setup
 
 
-from outscraper import VERSION
-
-
 def readme():
     with open('README.rst') as f:
         return f.read()
@@ -11,7 +8,7 @@ def readme():
 
 setup(
     name='google-services-api',
-    version=VERSION,
+    version='1.3.3',
     description='Google Maps and Google Maps reviews scraper by Outscraper API',
     long_description=readme(),
     classifiers = ['Programming Language :: Python',
