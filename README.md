@@ -81,7 +81,7 @@ result = api_client.google_play_reviews(
     'com.facebook.katana', reviewsLimit=20, language='en')
 ```
 
-## Emails & Contacts Scraper
+## Emails And Contacts Scraper
 
 ```python
 result = api_client.emails_and_contacts(['outscraper.com'])
