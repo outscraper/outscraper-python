@@ -294,6 +294,7 @@ class ApiClient(object):
                     Returns:
                             list: json result
         '''
+        async_request = reviewsLimit > 1000
         response = requests.get(f'{self._api_url}/maps/reviews-v3', params={
             'query': as_list(query),
             'reviewsLimit': reviewsLimit,
@@ -306,12 +307,15 @@ class ApiClient(object):
             'ignoreEmpty': ignore_empty,
             'language': language,
             'region': region,
-            'async': False,
+            'async': async_request,
             'fields': ','.join(fields) if fields else '',
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            return response.json().get('data', [])
+            if async_request:
+                return self._wait_request_archive(response.json()['id']).get('data', [])
+            else:
+                return response.json().get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
 
