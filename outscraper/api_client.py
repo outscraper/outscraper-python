@@ -28,16 +28,19 @@ class ApiClient(object):
         }
         self._requests_pause = requests_pause
 
-    def get_requests_history(self) -> list:
+    def get_requests_history(self, type: str = 'running') -> list:
         '''
             Fetch up to 100 of your last requests.
 
                     Parameters:
+                            type (str): parameter allows you to filter requests by type (running/finished).
 
                     Returns:
                             list: requests history
+
+            See: https://app.outscraper.com/api-docs#tag/Requests/paths/~1requests/get
         '''
-        response = requests.get(f'{self._api_url}/requests', headers=self._api_headers)
+        response = requests.get(f'{self._api_url}/requests?type={type}', headers=self._api_headers)
 
         if 199 < response.status_code < 300:
             return response.json()
@@ -53,6 +56,8 @@ class ApiClient(object):
 
                     Returns:
                             dict: result from the archive
+
+            See: https://app.outscraper.com/api-docs#tag/Requests/paths/~1requests~1{requestId}/get
         '''
         response = requests.get(f'{self._api_url}/requests/{request_id}')
 
@@ -91,8 +96,10 @@ class ApiClient(object):
 
                     Returns:
                             list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Google-Search/paths/~1google-search-v2/get
         '''
-        response = requests.get(f'{self._api_url}/search', params={
+        response = requests.get(f'{self._api_url}/google-search-v2', params={
             'query': as_list(query),
             'language': language,
             'region': region,
@@ -125,6 +132,8 @@ class ApiClient(object):
 
                     Returns:
                             list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Google-Maps/paths/~1maps~1search/get
         '''
         response = requests.get(f'{self._api_url}/maps/search', params={
             'query': as_list(query),
@@ -162,6 +171,8 @@ class ApiClient(object):
 
                     Returns:
                             list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Google-Maps/paths/~1maps~1search-v2/get
         '''
         response = requests.get(f'{self._api_url}/maps/search-v2', params={
             'query': as_list(query),
@@ -197,6 +208,8 @@ class ApiClient(object):
 
                     Returns:
                             list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Google-Maps/paths/~1maps~1directions/get
         '''
         response = requests.get(f'{self._api_url}/maps/directions', params={
             'query': as_list(query),
@@ -243,6 +256,8 @@ class ApiClient(object):
 
                     Returns:
                             list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Google-Maps/paths/~1maps~1reviews-v2/get
         '''
         response = requests.get(f'{self._api_url}/maps/reviews-v2', params={
             'query': as_list(query),
@@ -293,6 +308,8 @@ class ApiClient(object):
 
                     Returns:
                             list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Google-Maps/paths/~1maps~1reviews-v3/get
         '''
         async_request = reviewsLimit > 1000
         response = requests.get(f'{self._api_url}/maps/reviews-v3', params={
@@ -336,6 +353,8 @@ class ApiClient(object):
 
                     Returns:
                             list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Google-Maps/paths/~1maps~1photos/get
         '''
         response = requests.get(f'{self._api_url}/maps/photos', params={
             'query': as_list(query),
@@ -375,6 +394,8 @@ class ApiClient(object):
 
                     Returns:
                             list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Google-Play/paths/~1google-play~1reviews/get
         '''
         response = requests.get(f'{self._api_url}/google-play/reviews', params={
             'query': as_list(query),
@@ -401,6 +422,8 @@ class ApiClient(object):
 
                     Returns:
                             list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Emails-and-Contacts
         '''
         response = requests.get(f'{self._api_url}/emails-and-contacts', params={
             'query': as_list(query),
