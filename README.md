@@ -26,6 +26,7 @@ from outscraper import ApiClient
 
 api_client = ApiClient(api_key='SECRET_API_KEY')
 ```
+[Link to the profile page to create the API key](https://app.outscraper.com/profile)
 
 ## Scrape Google Maps (Places)
 
