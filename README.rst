@@ -43,6 +43,17 @@ Initialization
 
    api_client = ApiClient(api_key='SECRET_API_KEY')
 
+Scrape Google Search
+---------------------------
+
+.. code:: python
+
+   # Search for businesses in specific locations:
+   result = api_client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
+
+   # Googel Search
+   result = api_client.google_search('bitcoin')
+
 Scrape Google Maps (Places)
 ---------------------------
 

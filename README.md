@@ -27,6 +27,16 @@ from outscraper import ApiClient
 api_client = ApiClient(api_key='SECRET_API_KEY')
 ```
 
+## Scrape Google Search
+
+```python
+# Googel Search
+result = api_client.google_search('bitcoin')
+
+# Googel Search News
+result = api_client.google_search_news('election', language='en')
+```
+
 ## Scrape Google Maps (Places)
 
 ```python
