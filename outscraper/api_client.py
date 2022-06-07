@@ -12,7 +12,7 @@ class ApiClient(object):
     maps_result = api_cliet.google_maps_search('restaurants brooklyn usa')
     search_result = api_cliet.google_search('bitcoin')
     ```
-    https://github.com/outscraper/google-maps-scraper-pyhton
+    https://github.com/outscraper/google-scraper-pyhton
     """
 
     _api_url = 'https://api.app.outscraper.com'
