@@ -18,7 +18,7 @@ setup(
                     'Topic :: Utilities',
     ],
     keywords='extractor google api maps search json scrape parser reviews google play',
-    url='https://github.com/outscraper/google-maps-scraper-pyhton',
+    url='https://github.com/outscraper/google-scraper-pyhton',
     author='Outscraper',
     author_email='team@outscraper.com',
     license='MIT',
