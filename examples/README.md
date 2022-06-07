@@ -65,3 +65,21 @@ for place in results:
     for review in place.get('reviews_data', []):
         print('review:', review['review_text'])
 ```
+
+## Example 4: Scrap Only New Reviews
+
+```python
+results = api_client.google_maps_reviews_v3(
+    ["ChIJN5X_gWdZwokRck9rk2guJ1M", "ChIJxWLy8DlawokR1jvfXUPSTUE"],
+    reviewsLimit=1000,
+    limit=1,
+    sort='newest',
+    cutoff=1654596109, # the maximum timestamp value for reviews (oldest review you want to extract). Can be used to scrape only the new reviews since your latest update
+)
+
+for place in results:
+    print('name:', place['name'])
+    new_reviews = place.get('reviews_data', []))
+    print('new reviews', len(new_reviews))
+```
+
