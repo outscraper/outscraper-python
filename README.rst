@@ -5,23 +5,6 @@ Python SDK that allows using `Outscraper’s
 services <https://outscraper.com/services/>`__ and `Outscraper’s
 API <https://app.outscraper.com/api-docs>`__.
 
-List of Supported Services
---------------------------
-
--  `Google Maps Scraper <https://outscraper.com/google-maps-scraper/>`__
--  `Google Maps Reviews
-   Scraper <https://outscraper.com/google-maps-reviews-scraper/>`__
--  `Google Maps Photos
-   Scraper <https://outscraper.com/google-maps-photos-scraper/>`__
--  `Google Maps Directions
-   Scraper <https://outscraper.com/google-maps-traffic-extractor/>`__
--  `Google Play Reviews
-   Scraper <https://outscraper.com/google-maps-photos-scraper/>`__
--  `Emails & Contacts
-   Scraper <https://outscraper.com/emails-scraper/>`__
-
-`API Docs <https://app.outscraper.com/api-docs>`__
-
 Installation
 ------------
 
