@@ -83,3 +83,23 @@ for place in results:
     print('new reviews', len(new_reviews))
 ```
 
+## Example 4: Scrape And Save Places Into a Table
+
+```python
+results = api_client.google_maps_search_v2(
+    ['restaurants brooklyn usa', 'bars brooklyn usa'],
+    limit=500,
+    language='en',
+    region='US',
+)
+
+# combine places from all queries into a list
+all_places = []
+for query_places in results:
+    all_places.extend(query_places)
+
+# save to file
+import pandas as pd
+df = pd.DataFrame(all_places)
+df.to_csv('results.csv', index=None)
+```
