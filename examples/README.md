@@ -83,7 +83,7 @@ for place in results:
     print('new reviews', len(new_reviews))
 ```
 
-## Example 4: Scrape And Save Places Into a Table
+## Example 5: Scrape And Save Places Into a Table
 
 ```python
 results = api_client.google_maps_search_v2(
