@@ -103,3 +103,35 @@ import pandas as pd
 df = pd.DataFrame(all_places)
 df.to_csv('results.csv', index=None)
 ```
+
+## Example 6: Get Places Information From a list of Place IDs (Multithreading)
+
+```python
+from functools import partial
+from multiprocessing.pool import ThreadPool
+
+place_ids = [
+    'ChIJNw4_-cWXyFYRF_4GTtujVsw',
+    'ChIJ39fGAcGXyFYRNdHIXy-W5BA',
+    'ChIJVVVl-cWXyFYRQYBCEkX0W5Y',
+    'ChIJScUP1R6XyFYR0sY1UwNzq-c',
+    'ChIJmeiNBMeXyFYRzQrnMMDV8Jc',
+    'ChIJifOTBMeXyFYRmu3EGp_QBuY',
+    'ChIJ1fwt-cWXyFYR2cjoDAGs9UI',
+    'ChIJ5zQrTzSXyFYRuiY31iE7M1s',
+    'ChIJQSyf4huXyFYRpP9W4rtBelA',
+    'ChIJRWK5W2-byFYRiaF9vVgzZA4'
+]
+
+# fast download in 4 threads
+pool = ThreadPool(4)
+results = pool.map(partial(api_client.google_maps_search_v2, limit=500, language='en', region='US'), place_ids)
+
+# combine places from all queries
+all_places = []
+for query_places in results:
+    if query_places and query_places[0]:
+        all_places.append(query_places[0][0])
+    else:
+        all_places.append({})
+```
