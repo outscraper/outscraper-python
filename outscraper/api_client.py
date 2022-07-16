@@ -469,3 +469,26 @@ class ApiClient(object):
             return self._wait_request_archive(response.json()['id']).get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
+
+    def phones_enricher(self, query: list, fields: list = None) -> list:
+        '''
+            Returns phones carrier data (name/type), validates phones, ensures messages deliverability.
+
+                    Parameters:
+                            query (list | str): Phone number (e.g., +1 281 236 8208).
+                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Phones/paths/~1phones-enricher/get
+        '''
+        response = requests.get(f'{self._api_url}/phones-enricher', params={
+            'query': as_list(query),
+            'fields': ','.join(fields) if fields else '',
+        }, headers=self._api_headers)
+
+        if 199 < response.status_code < 300:
+            return self._wait_request_archive(response.json()['id']).get('data', [])
+
+        raise Exception(f'Response status code: {response.status_code}')
