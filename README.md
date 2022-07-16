@@ -1,5 +1,5 @@
 # Scrape Google Services With Outscraper SDK in Python
-Python SDK that allows using [Outscraper's services](https://outscraper.com/services/) and [Outscraper's API](https://app.outscraper.com/api-docs).
+The library provides convenient access to the [Outscraper API](https://app.outscraper.com/api-docs) from applications written in the Python language. Allows using [Outscraper's services](https://outscraper.com/services/) from your code.
 
 [API Docs](https://app.outscraper.com/api-docs)
 
