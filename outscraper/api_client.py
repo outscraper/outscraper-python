@@ -262,7 +262,7 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_reviews(self, query: list, reviewsLimit: int = 100, limit: int = 1, sort: str = 'most_relevant',
+    def google_maps_reviews(self, query: list, reviews_limit: int = 100, limit: int = 1, sort: str = 'most_relevant',
         skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
         coordinates: str = None, language: str = 'en', region: str = None, fields: list = None
     ) -> list:
@@ -274,7 +274,7 @@ class ApiClient(object):
 
                     Parameters:
                             query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
-                            reviewsLimit (int): parameter specifies the limit of reviews to extract from one place.
+                            reviews_limit (int): parameter specifies the limit of reviews to extract from one place.
                             limit (str): parameter specifies the limit of places to take from one query search.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
                             skip (int): parameter specifies the number of items to skip. It's commonly used in pagination.
@@ -294,7 +294,7 @@ class ApiClient(object):
         '''
         response = requests.get(f'{self._api_url}/maps/reviews-v2', params={
             'query': as_list(query),
-            'reviewsLimit': reviewsLimit,
+            'reviewsLimit': reviews_limit,
             'limit': limit,
             'sort': sort,
             'skip': skip,
@@ -313,7 +313,7 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_reviews_v3(self, query: list, reviewsLimit: int = 10, limit: int = 1, sort: str = 'most_relevant',
+    def google_maps_reviews_v3(self, query: list, reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
         skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
         language: str = 'en', region: str = None, reviews_query: str = None, fields: list = None
     ) -> list:
@@ -322,11 +322,11 @@ class ApiClient(object):
 
             Returns Google Maps reviews from places when using search queries (e.g., restaurants, Manhattan, NY, USA) or from a single place when using Google IDs or names (e.g., NoMad Restaurant, NY, USA, 0x886916e8bc273979:0x5141fcb11460b226).
             Places information will be returned as well in the case at least one review is found.
-            This endpoint is optimized for fast responses and can be used as real time API. Set the reviewsLimit parameter to 10 to achieve the maximum response speed.
+            This endpoint is optimized for fast responses and can be used as real time API. Set the reviews_limit parameter to 10 to achieve the maximum response speed.
 
                     Parameters:
                             query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
-                            reviewsLimit (int): parameter specifies the limit of reviews to extract from one place.
+                            reviews_limit (int): parameter specifies the limit of reviews to extract from one place.
                             limit (str): parameter specifies the limit of places to take from one query search.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
                             skip (int): parameter specifies the number of items to skip. It's commonly used in pagination.
@@ -345,10 +345,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google-Maps/paths/~1maps~1reviews-v3/get
         '''
-        async_request = reviewsLimit > 1000
+        async_request = reviews_limit > 1000
         response = requests.get(f'{self._api_url}/maps/reviews-v3', params={
             'query': as_list(query),
-            'reviewsLimit': reviewsLimit,
+            'reviewsLimit': reviews_limit,
             'limit': limit,
             'sort': sort,
             'skip': skip,
@@ -412,7 +412,7 @@ class ApiClient(object):
     def google_maps_reviews_v2(self, *args, **kwargs) -> list: # alias
         return self.google_maps_reviews(*args, **kwargs)
 
-    def google_play_reviews(self, query: list, reviewsLimit: int = 100, sort: str = 'most_relevant', cutoff: int = None,
+    def google_play_reviews(self, query: list, reviews_limit: int = 100, sort: str = 'most_relevant', cutoff: int = None,
         rating: int = None, language: str = 'en', fields: list = None
     ) -> list:
         '''
@@ -420,7 +420,7 @@ class ApiClient(object):
 
                     Parameters:
                             query (list | str): you can use app IDs or direct links (e.g., https://play.google.com/store/apps/details?id=com.facebook.katana, com.facebook.katana). Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
-                            reviewsLimit (int): parameter specifies the limit of reviews to extract from one query.
+                            reviews_limit (int): parameter specifies the limit of reviews to extract from one query.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "rating".
                             cutoff (int): parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to "newest".
                             rating (int): Filter by a specific rating. Works only with "sort=rating".
@@ -434,7 +434,7 @@ class ApiClient(object):
         '''
         response = requests.get(f'{self._api_url}/google-play/reviews', params={
             'query': as_list(query),
-            'limit': reviewsLimit,
+            'limit': reviews_limit,
             'sort': sort,
             'cutoff': cutoff,
             'rating': rating,

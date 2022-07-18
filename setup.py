@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='google-services-api',
-    version='1.5.2',
+    version='1.6.0',
     description='Google Maps and Google Maps reviews scraper by Outscraper API',
     long_description=readme(),
     classifiers = ['Programming Language :: Python',
