@@ -7,9 +7,9 @@ def readme():
 
 
 setup(
-    name='google-services-api',
+    name='outscraper',
     version='1.6.0',
-    description='Google Maps and Google Maps reviews scraper by Outscraper API',
+    description='Python bindings for the Outscraper API',
     long_description=readme(),
     classifiers = ['Programming Language :: Python',
                     'License :: OSI Approved :: MIT License',
@@ -17,10 +17,10 @@ setup(
                     'Intended Audience :: Developers',
                     'Topic :: Utilities',
     ],
-    keywords='extractor google api maps search json scrape parser reviews google play',
-    url='https://github.com/outscraper/google-scraper-pyhton',
+    keywords='outscraper webscraper extractor google api maps search json scrape parser reviews google play amazon',
+    url='https://github.com/outscraper/outscraper-pyhton',
     author='Outscraper',
-    author_email='team@outscraper.com',
+    author_email='support@outscraper.com',
     license='MIT',
     packages=['outscraper'],
     install_requires=['requests'],

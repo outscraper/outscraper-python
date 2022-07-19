@@ -90,7 +90,7 @@ result = api_client.google_play_reviews(
 result = api_client.emails_and_contacts(['outscraper.com'])
 ```
 
-[More examples](https://github.com/outscraper/google-scraper-pyhton/tree/master/examples)
+[More examples](https://github.com/outscraper/outscraper-pyhton/tree/master/examples)
 
 ## Responses examples
 

@@ -8,11 +8,11 @@ class ApiClient(object):
     """Outscraper ApiClient - Python SDK that allows using Outscraper's services and Outscraper's API.
     ```python
     from outscraper import ApiClient
-    api_cliet = ApiClient(api_key='SECRET_API_KEY')
-    maps_result = api_cliet.google_maps_search('restaurants brooklyn usa')
-    search_result = api_cliet.google_search('bitcoin')
+    cliet = ApiClient(api_key='SECRET_API_KEY')
+    maps_result = cliet.google_maps_search('restaurants brooklyn usa')
+    search_result = cliet.google_search('bitcoin')
     ```
-    https://github.com/outscraper/google-scraper-pyhton
+    https://github.com/outscraper/outscraper-pyhton
     """
 
     _api_url = 'https://api.app.outscraper.com'
