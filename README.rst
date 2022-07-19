@@ -15,7 +15,7 @@ Python 3+
    pip install outscraper
 
 `Link to the python package
-page <https://pypi.org/project/google-services-api/>`__
+page <https://pypi.org/project/outscraper/>`__
 
 Initialization
 ---------------
@@ -24,7 +24,7 @@ Initialization
 
    from outscraper import ApiClient
 
-   api_client = ApiClient(api_key='SECRET_API_KEY')
+   client = ApiClient(api_key='SECRET_API_KEY')
 
 Scrape Google Search
 ---------------------------
@@ -32,10 +32,10 @@ Scrape Google Search
 .. code:: python
 
    # Search for businesses in specific locations:
-   result = api_client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
+   result = client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
 
    # Googel Search
-   result = api_client.google_search('bitcoin')
+   result = client.google_search('bitcoin')
 
 Scrape Google Maps (Places)
 ---------------------------
@@ -43,13 +43,13 @@ Scrape Google Maps (Places)
 .. code:: python
 
    # Search for businesses in specific locations:
-   result = api_client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
+   result = client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
 
    # Get data of the specific place by id
-   result = api_client.google_maps_search('ChIJrc9T9fpYwokRdvjYRHT8nI4', language='en')
+   result = client.google_maps_search('ChIJrc9T9fpYwokRdvjYRHT8nI4', language='en')
 
    # Search with many queries (batching)
-   result = api_client.google_maps_search([
+   result = client.google_maps_search([
        'restaurants brooklyn usa',
        'bars brooklyn usa',
    ], language='en')
@@ -60,16 +60,16 @@ Scrape Google Maps Reviews
 .. code:: python
 
    # Get reviews of the specific place by id
-   result = api_client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviewsLimit=20, language='en')
+   result = client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviewsLimit=20, language='en')
 
    # Get reviews for places found by search query
-   result = api_client.google_maps_reviews('Memphis Seoul brooklyn usa', reviewsLimit=20, limit=500, language='en')
+   result = client.google_maps_reviews('Memphis Seoul brooklyn usa', reviewsLimit=20, limit=500, language='en')
 
    # Get only new reviews during last 24 hours
    from datetime import datetime, timedelta
    yesterday_timestamp = int((datetime.now() - timedelta(1)).timestamp())
 
-   result = api_client.google_maps_reviews(
+   result = client.google_maps_reviews(
        'ChIJrc9T9fpYwokRdvjYRHT8nI4', sort='newest', cutoff=yesterday_timestamp, reviewsLimit=100, language='en')
 
 Scrape Google Maps Photos
@@ -77,7 +77,7 @@ Scrape Google Maps Photos
 
 .. code:: python
 
-   result = api_client.google_maps_photos(
+   result = client.google_maps_photos(
        'Trump Tower, NY, USA', photosLimit=20, language='en')
 
 Scrape Google Maps Directions
@@ -85,14 +85,14 @@ Scrape Google Maps Directions
 
 .. code:: python
 
-   result = api_client.google_maps_directions(['29.696596, 76.994928    30.7159662444353, 76.8053887016268', '29.696596, 76.994928    30.723065, 76.770169'])
+   result = client.google_maps_directions(['29.696596, 76.994928    30.7159662444353, 76.8053887016268', '29.696596, 76.994928    30.723065, 76.770169'])
 
 Scrape Google Play Reviews
 --------------------------
 
 .. code:: python
 
-   result = api_client.google_play_reviews(
+   result = client.google_play_reviews(
        'com.facebook.katana', reviewsLimit=20, language='en')
 
 Emails And Contacts Scraper
@@ -100,7 +100,7 @@ Emails And Contacts Scraper
 
 .. code:: python
 
-   result = api_client.emails_and_contacts(['outscraper.com'])
+   result = client.emails_and_contacts(['outscraper.com'])
 
 Responses examples
 ------------------

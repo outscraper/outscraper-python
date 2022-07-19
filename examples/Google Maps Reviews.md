@@ -9,7 +9,7 @@ Python 3+
 pip install outscraper
 ```
 
-[Link to the Python package page](https://pypi.org/project/google-services-api/)
+[Link to the Python package page](https://pypi.org/project/outscraper/)
 
 ## Initialization
 ```python
