@@ -12,7 +12,7 @@ Python 3+
 
 .. code:: bash
 
-   pip install google-services-api
+   pip install outscraper
 
 `Link to the python package
 page <https://pypi.org/project/google-services-api/>`__

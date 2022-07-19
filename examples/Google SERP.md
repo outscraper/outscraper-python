@@ -6,7 +6,7 @@ The library returns search results from Google based on a given search query via
 
 Python 3+
 ```bash
-pip install google-services-api
+pip install outscraper
 ```
 
 [Link to the Python package page](https://pypi.org/project/google-services-api/)

@@ -6,7 +6,7 @@ The library provides real-time access to the reviews from Google Maps via [Outsc
 
 Python 3+
 ```bash
-pip install google-services-api
+pip install outscraper
 ```
 
 [Link to the Python package page](https://pypi.org/project/google-services-api/)
