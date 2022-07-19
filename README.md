@@ -1,4 +1,5 @@
-# Scrape Google Services With Outscraper SDK in Python
+# Outscraper Python Library
+
 The library provides convenient access to the [Outscraper API](https://app.outscraper.com/api-docs) from applications written in the Python language. Allows using [Outscraper's services](https://outscraper.com/services/) from your code.
 
 [API Docs](https://app.outscraper.com/api-docs)
@@ -51,17 +52,17 @@ result = client.google_maps_search([
 
 ```python
 # Get reviews of the specific place by id
-result = client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviewsLimit=20, language='en')
+result = client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviews_limit=20, language='en')
 
 # Get reviews for places found by search query
-result = client.google_maps_reviews('Memphis Seoul brooklyn usa', reviewsLimit=20, limit=500, language='en')
+result = client.google_maps_reviews('Memphis Seoul brooklyn usa', reviews_limit=20, limit=500, language='en')
 
 # Get only new reviews during last 24 hours
 from datetime import datetime, timedelta
 yesterday_timestamp = int((datetime.now() - timedelta(1)).timestamp())
 
 result = client.google_maps_reviews(
-    'ChIJrc9T9fpYwokRdvjYRHT8nI4', sort='newest', cutoff=yesterday_timestamp, reviewsLimit=100, language='en')
+    'ChIJrc9T9fpYwokRdvjYRHT8nI4', sort='newest', cutoff=yesterday_timestamp, reviews_limit=100, language='en')
 ```
 
 ## Scrape Google Maps Photos
@@ -81,7 +82,7 @@ result = client.google_maps_directions(['29.696596, 76.994928    30.715966244435
 
 ```python
 result = client.google_play_reviews(
-    'com.facebook.katana', reviewsLimit=20, language='en')
+    'com.facebook.katana', reviews_limit=20, language='en')
 ```
 
 ## Emails And Contacts Scraper

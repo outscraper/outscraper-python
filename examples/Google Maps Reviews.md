@@ -36,7 +36,7 @@ result = client.google_maps_reviews_v3(
 # Scrap Places Reviews by Place Ids
 results = client.google_maps_reviews_v3(
     ["ChIJN5X_gWdZwokRck9rk2guJ1M", "ChIJxWLy8DlawokR1jvfXUPSTUE"],
-    reviewsLimit=20, # limit of reviews per each place
+    reviews_limit=20, # limit of reviews per each place
     limit=1, # limit of palces per each query
 )
 
@@ -48,7 +48,7 @@ for place in results:
 # Scrap Only New Reviews
 results = client.google_maps_reviews_v3(
     ["ChIJN5X_gWdZwokRck9rk2guJ1M", "ChIJxWLy8DlawokR1jvfXUPSTUE"],
-    reviewsLimit=1000,
+    reviews_limit=1000,
     limit=1,
     sort='newest',
     cutoff=1654596109, # the maximum timestamp value for reviews (oldest review you want to extract). Can be used to scrape only the new reviews since your latest update

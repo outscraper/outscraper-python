@@ -1,4 +1,4 @@
-Outscraper SDK in Python
+Outscraper Python Library
 ========================
 
 Python SDK that allows using `Outscraper’s
@@ -60,17 +60,17 @@ Scrape Google Maps Reviews
 .. code:: python
 
    # Get reviews of the specific place by id
-   result = client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviewsLimit=20, language='en')
+   result = client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviews_limit=20, language='en')
 
    # Get reviews for places found by search query
-   result = client.google_maps_reviews('Memphis Seoul brooklyn usa', reviewsLimit=20, limit=500, language='en')
+   result = client.google_maps_reviews('Memphis Seoul brooklyn usa', reviews_limit=20, limit=500, language='en')
 
    # Get only new reviews during last 24 hours
    from datetime import datetime, timedelta
    yesterday_timestamp = int((datetime.now() - timedelta(1)).timestamp())
 
    result = client.google_maps_reviews(
-       'ChIJrc9T9fpYwokRdvjYRHT8nI4', sort='newest', cutoff=yesterday_timestamp, reviewsLimit=100, language='en')
+       'ChIJrc9T9fpYwokRdvjYRHT8nI4', sort='newest', cutoff=yesterday_timestamp, reviews_limit=100, language='en')
 
 Scrape Google Maps Photos
 -------------------------
@@ -93,7 +93,7 @@ Scrape Google Play Reviews
 .. code:: python
 
    result = client.google_play_reviews(
-       'com.facebook.katana', reviewsLimit=20, language='en')
+       'com.facebook.katana', reviews_limit=20, language='en')
 
 Emails And Contacts Scraper
 ---------------------------
