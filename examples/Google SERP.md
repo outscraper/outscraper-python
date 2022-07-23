@@ -23,5 +23,5 @@ client = ApiClient(api_key='SECRET_API_KEY')
 
 ```python
 # Search for SERP results:
-result = client.google_search(['buy iphone 13 TX'], language='en', region='us')
+results = client.google_search(['buy iphone 13 TX'], language='en', region='us')
 ```

@@ -23,10 +23,10 @@ client = ApiClient(api_key='SECRET_API_KEY')
 
 ```python
 # Search for businesses in specific locations:
-result = client.google_maps_search_v2(['restaurants brooklyn usa'], limit=20, language='en', region='us')
+results = client.google_maps_search_v2(['restaurants brooklyn usa'], limit=20, language='en', region='us')
 
 # Get data of the specific place by id
-result = client.google_maps_search_v2(['ChIJrc9T9fpYwokRdvjYRHT8nI4'], language='en')
+results = client.google_maps_search_v2(['ChIJrc9T9fpYwokRdvjYRHT8nI4'], language='en')
 
 # Scrap Places by Two Queries
 results = client.google_maps_search_v2(

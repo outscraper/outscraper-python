@@ -23,5 +23,5 @@ client = ApiClient(api_key='SECRET_API_KEY')
 
 ```python
 # Search contacts from website:
-result = client.emails_and_contacts(['outscraper.com'])
+results = client.emails_and_contacts(['outscraper.com'])
 ```

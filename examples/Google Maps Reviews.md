@@ -23,14 +23,14 @@ client = ApiClient(api_key='SECRET_API_KEY')
 
 ```python
 # Get reviews of the specific place by id
-result = client.google_maps_reviews_v3(['ChIJrc9T9fpYwokRdvjYRHT8nI4'], reviews_limit=20, language='en')
+results = client.google_maps_reviews_v3(['ChIJrc9T9fpYwokRdvjYRHT8nI4'], reviews_limit=20, language='en')
 
 # Get reviews for places found by search query
-result = client.google_maps_reviews_v3(['Memphis Seoul brooklyn usa'], reviews_limit=20, limit=500, language='en')
+results = client.google_maps_reviews_v3(['Memphis Seoul brooklyn usa'], reviews_limit=20, limit=500, language='en')
 
 # Get only new reviews during last 24 hours
 yesterday_timestamp = 1657980986
-result = client.google_maps_reviews_v3(
+results = client.google_maps_reviews_v3(
     ['ChIJrc9T9fpYwokRdvjYRHT8nI4'], sort='newest', cutoff=yesterday_timestamp, reviews_limit=100, language='en')
 
 # Scrap Places Reviews by Place Ids

@@ -9,8 +9,8 @@ class ApiClient(object):
     ```python
     from outscraper import ApiClient
     cliet = ApiClient(api_key='SECRET_API_KEY')
-    maps_result = cliet.google_maps_search('restaurants brooklyn usa')
-    search_result = cliet.google_search('bitcoin')
+    maps_results = cliet.google_maps_search('restaurants brooklyn usa')
+    search_results = cliet.google_search('bitcoin')
     ```
     https://github.com/outscraper/outscraper-pyhton
     """
