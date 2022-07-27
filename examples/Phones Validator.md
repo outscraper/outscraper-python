@@ -22,6 +22,6 @@ client = ApiClient(api_key='SECRET_API_KEY')
 ## Usage
 
 ```python
-# Search contacts from website:
+# Get information about the phone number:
 results = client.phones_enricher(['12812368208'])
 ```
