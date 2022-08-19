@@ -1,9 +1,12 @@
 Outscraper Python Library
-========================
+=========================
 
-Python SDK that allows using `Outscraper’s
-services <https://outscraper.com/services/>`__ and `Outscraper’s
-API <https://app.outscraper.com/api-docs>`__.
+The library provides convenient access to the `Outscraper
+API <https://app.outscraper.com/api-docs>`__ from applications written
+in the Python language. Allows using `Outscraper’s
+services <https://outscraper.com/services/>`__ from your code.
+
+`API Docs <https://app.outscraper.com/api-docs>`__
 
 Installation
 ------------
@@ -18,7 +21,7 @@ Python 3+
 page <https://pypi.org/project/outscraper/>`__
 
 Initialization
----------------
+--------------
 
 .. code:: python
 
@@ -26,16 +29,19 @@ Initialization
 
    client = ApiClient(api_key='SECRET_API_KEY')
 
+`Link to the profile page to create the API
+key <https://app.outscraper.com/profile>`__
+
 Scrape Google Search
----------------------------
+--------------------
 
 .. code:: python
 
-   # Search for businesses in specific locations:
-   result = client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
-
    # Googel Search
-   result = client.google_search('bitcoin')
+   results = client.google_search('bitcoin')
+
+   # Googel Search News
+   results = client.google_search_news('election', language='en')
 
 Scrape Google Maps (Places)
 ---------------------------
@@ -43,13 +49,13 @@ Scrape Google Maps (Places)
 .. code:: python
 
    # Search for businesses in specific locations:
-   result = client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
+   results = client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
 
    # Get data of the specific place by id
-   result = client.google_maps_search('ChIJrc9T9fpYwokRdvjYRHT8nI4', language='en')
+   results = client.google_maps_search('ChIJrc9T9fpYwokRdvjYRHT8nI4', language='en')
 
    # Search with many queries (batching)
-   result = client.google_maps_search([
+   results = client.google_maps_search([
        'restaurants brooklyn usa',
        'bars brooklyn usa',
    ], language='en')
@@ -60,16 +66,16 @@ Scrape Google Maps Reviews
 .. code:: python
 
    # Get reviews of the specific place by id
-   result = client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviews_limit=20, language='en')
+   results = client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviews_limit=20, language='en')
 
    # Get reviews for places found by search query
-   result = client.google_maps_reviews('Memphis Seoul brooklyn usa', reviews_limit=20, limit=500, language='en')
+   results = client.google_maps_reviews('Memphis Seoul brooklyn usa', reviews_limit=20, limit=500, language='en')
 
    # Get only new reviews during last 24 hours
    from datetime import datetime, timedelta
    yesterday_timestamp = int((datetime.now() - timedelta(1)).timestamp())
 
-   result = client.google_maps_reviews(
+   results = client.google_maps_reviews(
        'ChIJrc9T9fpYwokRdvjYRHT8nI4', sort='newest', cutoff=yesterday_timestamp, reviews_limit=100, language='en')
 
 Scrape Google Maps Photos
@@ -77,7 +83,7 @@ Scrape Google Maps Photos
 
 .. code:: python
 
-   result = client.google_maps_photos(
+   results = client.google_maps_photos(
        'Trump Tower, NY, USA', photosLimit=20, language='en')
 
 Scrape Google Maps Directions
@@ -85,14 +91,14 @@ Scrape Google Maps Directions
 
 .. code:: python
 
-   result = client.google_maps_directions(['29.696596, 76.994928    30.7159662444353, 76.8053887016268', '29.696596, 76.994928    30.723065, 76.770169'])
+   results = client.google_maps_directions(['29.696596, 76.994928    30.7159662444353, 76.8053887016268', '29.696596, 76.994928    30.723065, 76.770169'])
 
 Scrape Google Play Reviews
 --------------------------
 
 .. code:: python
 
-   result = client.google_play_reviews(
+   results = client.google_play_reviews(
        'com.facebook.katana', reviews_limit=20, language='en')
 
 Emails And Contacts Scraper
@@ -100,7 +106,10 @@ Emails And Contacts Scraper
 
 .. code:: python
 
-   result = client.emails_and_contacts(['outscraper.com'])
+   results = client.emails_and_contacts(['outscraper.com'])
+
+`More
+examples <https://github.com/outscraper/outscraper-python/tree/master/examples>`__
 
 Responses examples
 ------------------
@@ -404,3 +413,9 @@ Emails & Contacts Scraper response example:
          }
        }
      ]
+
+Contributing
+------------
+
+Bug reports and pull requests are welcome on GitHub at
+https://github.com/outscraper/outscraper-python.
