@@ -132,18 +132,24 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google-Search/paths/~1google-search-v2/get
         '''
+        queries = as_list(query)
+        async_request = len(queries) > 1 or pages_per_query > 1
+
         response = requests.get(f'{self._api_url}/google-search-v3', params={
-            'query': as_list(query),
+            'query': queries,
             'pagesPerQuery': pages_per_query,
             'uule': uule,
             'language': language,
             'region': region,
-            'async': False,
+            'async': async_request,
             'fields': ','.join(fields) if fields else '',
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
-            return self._wait_request_archive(response.json()['id']).get('data', [])
+            if async_request:
+                return self._wait_request_archive(response.json()['id']).get('data', [])
+            else:
+                return response.json().get('data', [])
 
         raise Exception(f'Response status code: {response.status_code}')
 
