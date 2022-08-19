@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='outscraper',
-    version='1.7.0',
+    version='1.7.1',
     description='Python bindings for the Outscraper API',
     long_description=readme(),
     classifiers = ['Programming Language :: Python',
@@ -18,7 +18,7 @@ setup(
                     'Topic :: Utilities',
     ],
     keywords='outscraper webscraper extractor google api maps search json scrape parser reviews google play amazon',
-    url='https://github.com/outscraper/outscraper-pyhton',
+    url='https://github.com/outscraper/outscraper-python',
     author='Outscraper',
     author_email='support@outscraper.com',
     license='MIT',

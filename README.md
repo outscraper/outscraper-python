@@ -91,7 +91,7 @@ results = client.google_play_reviews(
 results = client.emails_and_contacts(['outscraper.com'])
 ```
 
-[More examples](https://github.com/outscraper/outscraper-pyhton/tree/master/examples)
+[More examples](https://github.com/outscraper/outscraper-python/tree/master/examples)
 
 ## Responses examples
 
