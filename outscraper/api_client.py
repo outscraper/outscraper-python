@@ -101,37 +101,6 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google-Search/paths/~1google-search-v2/get
         '''
-        response = requests.get(f'{self._api_url}/google-search-v2', params={
-            'query': as_list(query),
-            'pagesPerQuery': pages_per_query,
-            'uule': uule,
-            'language': language,
-            'region': region,
-            'fields': ','.join(fields) if fields else '',
-        }, headers=self._api_headers)
-
-        if 199 < response.status_code < 300:
-            return self._wait_request_archive(response.json()['id']).get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
-
-    def google_search_v3(self, query: list, pages_per_query: int = 1, uule = '', language: str = 'en', region: str = None, fields: list = None) -> list:
-        '''
-            Get data from Google search
-
-                    Parameters:
-                            query (list | str): parameter defines the query or queries you want to search on Google. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
-                            pages_per_query (int): parameter specifies the limit of pages to return from one query.
-                            uule (str): Google UULE parameter is used to encode a place or an exact location (with latitude and longitude) into a code. By using it you can see a Google result page like someone located at the specified location.
-                            language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
-                            region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
-
-                    Returns:
-                            list: json result
-
-            See: https://app.outscraper.com/api-docs#tag/Google-Search/paths/~1google-search-v2/get
-        '''
         queries = as_list(query)
         async_request = len(queries) > 1 or pages_per_query > 1
 
@@ -453,6 +422,9 @@ class ApiClient(object):
 
     def google_maps_reviews_v2(self, *args, **kwargs) -> list: # alias
         return self.google_maps_reviews(*args, **kwargs)
+
+    def google_search_v3(self, *args, **kwargs) -> list: # alias
+        return self.google_search(*args, **kwargs)
 
     def google_play_reviews(self, query: list, reviews_limit: int = 100, sort: str = 'most_relevant', cutoff: int = None,
         rating: int = None, language: str = 'en', fields: list = None

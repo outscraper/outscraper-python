@@ -49,13 +49,13 @@ Scrape Google Maps (Places)
 .. code:: python
 
    # Search for businesses in specific locations:
-   results = client.google_maps_search('restaurants brooklyn usa', limit=20, language='en')
+   results = client.google_maps_search_v2('restaurants brooklyn usa', limit=20, language='en')
 
    # Get data of the specific place by id
-   results = client.google_maps_search('ChIJrc9T9fpYwokRdvjYRHT8nI4', language='en')
+   results = client.google_maps_search_v2('ChIJrc9T9fpYwokRdvjYRHT8nI4', language='en')
 
    # Search with many queries (batching)
-   results = client.google_maps_search([
+   results = client.google_maps_search_v2([
        'restaurants brooklyn usa',
        'bars brooklyn usa',
    ], language='en')
@@ -66,16 +66,16 @@ Scrape Google Maps Reviews
 .. code:: python
 
    # Get reviews of the specific place by id
-   results = client.google_maps_reviews('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviews_limit=20, language='en')
+   results = client.google_maps_reviews_v3('ChIJrc9T9fpYwokRdvjYRHT8nI4', reviews_limit=20, language='en')
 
    # Get reviews for places found by search query
-   results = client.google_maps_reviews('Memphis Seoul brooklyn usa', reviews_limit=20, limit=500, language='en')
+   results = client.google_maps_reviews_v3('Memphis Seoul brooklyn usa', reviews_limit=20, limit=500, language='en')
 
    # Get only new reviews during last 24 hours
    from datetime import datetime, timedelta
    yesterday_timestamp = int((datetime.now() - timedelta(1)).timestamp())
 
-   results = client.google_maps_reviews(
+   results = client.google_maps_reviews_v3(
        'ChIJrc9T9fpYwokRdvjYRHT8nI4', sort='newest', cutoff=yesterday_timestamp, reviews_limit=100, language='en')
 
 Scrape Google Maps Photos
