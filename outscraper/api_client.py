@@ -153,11 +153,11 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_search(self, query: list, limit: int = 500, extract_contacts: bool = False, drop_duplicates: bool = False,
+    def google_maps_search_v1(self, query: list, limit: int = 500, extract_contacts: bool = False, drop_duplicates: bool = False,
         coordinates: str = None, language: str = 'en', region: str = None, fields: list = None
     ) -> list:
         '''
-            Get Google Maps Data
+            Get Google Maps Data (old verison)
 
             Returns places from Google Maps based on a given search query (or many queries).
             The results from searches are the same as you would see by visiting a regular Google Maps site. However, in most cases, it's recommended to use locations inside queries (e.g., bars, NY, USA) as the IP addresses of Outscraper's servers might be located in different countries.
@@ -193,7 +193,7 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_search_v2(self, query: list, limit: int = 20, drop_duplicates: bool = False,
+    def google_maps_search(self, query: list, limit: int = 20, drop_duplicates: bool = False,
         language: str = 'en', region: str = None, skip: int = 0, fields: list = None,
     ) -> list:
         '''
@@ -273,12 +273,12 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_reviews(self, query: list, reviews_limit: int = 100, limit: int = 1, sort: str = 'most_relevant',
+    def google_maps_reviews_v2(self, query: list, reviews_limit: int = 100, limit: int = 1, sort: str = 'most_relevant',
         skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
         coordinates: str = None, language: str = 'en', region: str = None, fields: list = None
     ) -> list:
         '''
-            Get Google Maps Reviews
+            Get Google Maps Reviews (old verison)
 
             Returns Google Maps reviews from places when using search queries (e.g., restaurants, Manhattan, NY, USA) or from a single place when using IDs or names (e.g., NoMad Restaurant, NY, USA, 0x886916e8bc273979:0x5141fcb11460b226, ChIJu7bMNFV-54gR-lrHScvPRX4).
             Places information will be returned as well in the case at least one review is found.
@@ -324,7 +324,7 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_reviews_v3(self, query: list, reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
+    def google_maps_reviews(self, query: list, reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
         skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
         language: str = 'en', region: str = None, reviews_query: str = None, fields: list = None
     ) -> list:
@@ -419,12 +419,6 @@ class ApiClient(object):
 
     def google_maps_business_reviews(self, *args, **kwargs) -> list: # deprecated
         return self.google_maps_reviews(*args, **kwargs)
-
-    def google_maps_reviews_v2(self, *args, **kwargs) -> list: # alias
-        return self.google_maps_reviews(*args, **kwargs)
-
-    def google_search_v3(self, *args, **kwargs) -> list: # alias
-        return self.google_search(*args, **kwargs)
 
     def google_play_reviews(self, query: list, reviews_limit: int = 100, sort: str = 'most_relevant', cutoff: int = None,
         rating: int = None, language: str = 'en', fields: list = None

@@ -39,5 +39,5 @@ place_ids = [
 ]
 
 pool = ThreadPool(4) # number of threads, use something between 2 and 40
-results = pool.map(partial(client.google_maps_search_v2, language='en', region='US'), place_ids)
+results = pool.map(partial(client.google_maps_search, language='en', region='US'), place_ids)
 ```

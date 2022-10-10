@@ -23,18 +23,18 @@ client = ApiClient(api_key='SECRET_API_KEY')
 
 ```python
 # Get reviews of the specific place by id
-results = client.google_maps_reviews_v3(['ChIJrc9T9fpYwokRdvjYRHT8nI4'], reviews_limit=20, language='en')
+results = client.google_maps_reviews(['ChIJrc9T9fpYwokRdvjYRHT8nI4'], reviews_limit=20, language='en')
 
 # Get reviews for places found by search query
-results = client.google_maps_reviews_v3(['Memphis Seoul brooklyn usa'], reviews_limit=20, limit=500, language='en')
+results = client.google_maps_reviews(['Memphis Seoul brooklyn usa'], reviews_limit=20, limit=500, language='en')
 
 # Get only new reviews during last 24 hours
 yesterday_timestamp = 1657980986
-results = client.google_maps_reviews_v3(
+results = client.google_maps_reviews(
     ['ChIJrc9T9fpYwokRdvjYRHT8nI4'], sort='newest', cutoff=yesterday_timestamp, reviews_limit=100, language='en')
 
 # Scrap Places Reviews by Place Ids
-results = client.google_maps_reviews_v3(
+results = client.google_maps_reviews(
     ["ChIJN5X_gWdZwokRck9rk2guJ1M", "ChIJxWLy8DlawokR1jvfXUPSTUE"],
     reviews_limit=20, # limit of reviews per each place
     limit=1, # limit of palces per each query
@@ -46,7 +46,7 @@ for place in results:
         print('review:', review['review_text'])
 
 # Scrap Only New Reviews
-results = client.google_maps_reviews_v3(
+results = client.google_maps_reviews(
     ["ChIJN5X_gWdZwokRck9rk2guJ1M", "ChIJxWLy8DlawokR1jvfXUPSTUE"],
     reviews_limit=1000,
     limit=1,
