@@ -84,7 +84,7 @@ class ApiClient(object):
 
         raise Exception('Timeout exceeded')
 
-    def google_search(self, query: list, pages_per_query: int = 1, uule = '', language: str = 'en', region: str = None, fields: list = None) -> list:
+    def google_search(self, query: list, pages_per_query: int = 1, uule: str = None, language: str = 'en', region: str = None, fields: list = None) -> list:
         '''
             Get data from Google search
 
@@ -122,7 +122,7 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_search_news(self, query: list, pages_per_query: int = 1, uule: str = None, language: str = 'en', region: str = None, fields: list = None) -> list:
+    def google_search_news(self, query: list, pages_per_query: int = 1, uule: str = None, tbs: str = None, language: str = 'en', region: str = None, fields: list = None) -> list:
         '''
             Returns search results from Google based on a given search query (or many queries).
 
@@ -130,6 +130,7 @@ class ApiClient(object):
                             query (list | str): parameter defines the query or queries you want to search news on Google. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
                             pages_per_query (int): parameter specifies the limit of pages to return from one query.
                             uule (str): Google UULE parameter is used to encode a place or an exact location (with latitude and longitude) into a code. By using it you can see a Google result page like someone located at the specified location.
+                            tbs: parameter specifies the date range of the results (h - past hour, d - past 24 hours, w - past week, m - past month, 'y' - past year).
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
                             fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
@@ -143,6 +144,7 @@ class ApiClient(object):
             'query': as_list(query),
             'pagesPerQuery': pages_per_query,
             'uule': uule,
+            'tbs': tbs,
             'language': language,
             'region': region,
             'fields': ','.join(fields) if fields else '',
