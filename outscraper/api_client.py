@@ -358,7 +358,7 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google-Maps/paths/~1maps~1reviews-v3/get
         '''
-        async_request = reviews_limit > 1000
+        async_request = reviews_limit > 499
         response = requests.get(f'{self._api_url}/maps/reviews-v3', params={
             'query': as_list(query),
             'reviewsLimit': reviews_limit,
