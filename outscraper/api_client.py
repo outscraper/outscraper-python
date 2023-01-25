@@ -1,5 +1,6 @@
 import requests
 from time import sleep
+from typing import Union
 
 from .utils import as_list
 
@@ -66,6 +67,20 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
+    def _handle_response(self, response: requests.models.Response, wait_async: bool = False, async_request: bool = False) -> Union[list, dict]:
+        if 199 < response.status_code < 300:
+            if wait_async:
+                response_json = response.json()
+
+                if async_request:
+                    return response_json
+                else:
+                    return self._wait_request_archive(response_json['id']).get('data', [])
+            else:
+                return response.json().get('data', [])
+
+        raise Exception(f'Response status code: {response.status_code}')
+
     def _wait_request_archive(self, request_id: str) -> dict:
         ttl = self._max_ttl / self._requests_pause
 
@@ -84,7 +99,7 @@ class ApiClient(object):
 
         raise Exception('Timeout exceeded')
 
-    def google_search(self, query: list, pages_per_query: int = 1, uule: str = None, language: str = 'en', region: str = None, fields: list = None) -> list:
+    def google_search(self, query: Union[list, str], pages_per_query: int = 1, uule: str = None, language: str = 'en', region: str = None, fields: list = None, async_request: bool = False) -> Union[list, dict]:
         '''
             Get data from Google search
 
@@ -95,6 +110,7 @@ class ApiClient(object):
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
                             fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
 
                     Returns:
                             list: json result
@@ -102,7 +118,7 @@ class ApiClient(object):
             See: https://app.outscraper.com/api-docs#tag/Google-Search/paths/~1google-search-v2/get
         '''
         queries = as_list(query)
-        async_request = len(queries) > 1 or pages_per_query > 1
+        wait_async = async_request or (len(queries) > 1 or pages_per_query > 1)
 
         response = requests.get(f'{self._api_url}/google-search-v3', params={
             'query': queries,
@@ -114,13 +130,7 @@ class ApiClient(object):
             'fields': ','.join(fields) if fields else '',
         }, headers=self._api_headers)
 
-        if 199 < response.status_code < 300:
-            if async_request:
-                return self._wait_request_archive(response.json()['id']).get('data', [])
-            else:
-                return response.json().get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
+        return self._handle_response(response, wait_async, async_request)
 
     def google_search_news(self, query: list, pages_per_query: int = 1, uule: str = None, tbs: str = None, language: str = 'en', region: str = None, fields: list = None) -> list:
         '''
@@ -195,9 +205,9 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_search(self, query: list, limit: int = 20, drop_duplicates: bool = False,
-        language: str = 'en', region: str = None, skip: int = 0, fields: list = None,
-    ) -> list:
+    def google_maps_search(self, query: Union[list, str], limit: int = 20, drop_duplicates: bool = False,
+        language: str = 'en', region: str = None, skip: int = 0, fields: list = None, async_request: bool = False
+    ) -> Union[list, dict]:
         '''
             Get Google Maps Data V2 (speed optimized endpoint for real time data)
 
@@ -213,27 +223,28 @@ class ApiClient(object):
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
                             fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
 
                     Returns:
                             list: json result
 
             See: https://app.outscraper.com/api-docs#tag/Google-Maps/paths/~1maps~1search-v2/get
         '''
+        queries = as_list(query)
+        wait_async = async_request or (len(queries) > 10 and limit > 1)
+
         response = requests.get(f'{self._api_url}/maps/search-v2', params={
-            'query': as_list(query),
+            'query': queries,
             'language': language,
             'region': region,
             'organizationsPerQueryLimit': limit,
             'skipPlaces': skip,
             'dropDuplicates': drop_duplicates,
-            'async': False,
+            'async': wait_async,
             'fields': ','.join(fields) if fields else '',
         }, headers=self._api_headers)
 
-        if 199 < response.status_code < 300:
-            return response.json().get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
+        return self._handle_response(response, wait_async, async_request)
 
     def google_maps_directions(self, query: list, departure_time: int = None, finish_time: int = None, interval: int = 60,
         language: str = 'en', region: str = None, async_request: bool = False, fields: list = None
@@ -326,10 +337,10 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_reviews(self, query: list, reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
+    def google_maps_reviews(self, query: Union[list, str], reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
         skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
-        language: str = 'en', region: str = None, reviews_query: str = None, fields: list = None
-    ) -> list:
+        language: str = 'en', region: str = None, reviews_query: str = None, fields: list = None, async_request: bool = False
+    ) -> Union[list, dict]:
         '''
             Get Google Maps Reviews V3 (speed optimized endpoint for real time data)
 
@@ -352,15 +363,18 @@ class ApiClient(object):
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
                             fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
 
                     Returns:
                             list: json result
 
             See: https://app.outscraper.com/api-docs#tag/Google-Maps/paths/~1maps~1reviews-v3/get
         '''
-        async_request = reviews_limit > 499
+        queries = as_list(query)
+        wait_async = async_request or reviews_limit > 499 or len(queries) > 10
+
         response = requests.get(f'{self._api_url}/maps/reviews-v3', params={
-            'query': as_list(query),
+            'query': queries,
             'reviewsLimit': reviews_limit,
             'limit': limit,
             'sort': sort,
@@ -372,17 +386,11 @@ class ApiClient(object):
             'ignoreEmpty': ignore_empty,
             'language': language,
             'region': region,
-            'async': async_request,
+            'async': wait_async,
             'fields': ','.join(fields) if fields else '',
         }, headers=self._api_headers)
 
-        if 199 < response.status_code < 300:
-            if async_request:
-                return self._wait_request_archive(response.json()['id']).get('data', [])
-            else:
-                return response.json().get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
+        return self._handle_response(response, wait_async, async_request)
 
     def google_maps_photos(self, query: list, photosLimit: int = 100, limit: int = 1, coordinates: str = None,
         language: str = 'en', region: str = None, fields: list = None
