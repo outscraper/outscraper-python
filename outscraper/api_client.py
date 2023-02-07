@@ -302,8 +302,8 @@ class ApiClient(object):
                             limit (str): parameter specifies the limit of places to take from one query search.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
                             skip (int): parameter specifies the number of items to skip. It's commonly used in pagination.
-                            start (int): parameter specifies the start timestamp value for reviews. Using the start parameter overwrites sort parameter to newest.
-                            cutoff (int): parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to newest.
+                            start (int): parameter specifies the start timestamp value for reviews (newest review). The current timestamp is used when the value is not provided. Using the start parameter overwrites sort parameter to newest.
+                            cutoff (int): parameter specifies the maximum timestamp value for reviews (oldest). Using the cutoff parameter overwrites sort parameter to newest.
                             cutoff_rating (int): parameter specifies the maximum (for lowest_rating sorting) or minimum (for highest_rating sorting) rating for reviews. Using the cutoffRating requires sorting to be set to "lowest_rating" or "highest_rating".
                             ignore_empty (bool): parameter specifies whether to ignore reviews without text or not.
                             coordinates (str): parameter defines the coordinates of the location where you want your query to be applied. It has to be constructed in the next sequence: "@" + "latitude" + "," + "longitude" + "," + "zoom" (e.g. "@41.3954381,2.1628662,15.1z").
@@ -354,8 +354,8 @@ class ApiClient(object):
                             limit (str): parameter specifies the limit of places to take from one query search.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
                             skip (int): parameter specifies the number of items to skip. It's commonly used in pagination.
-                            start (int): parameter specifies the start timestamp value for reviews. Using the start parameter overwrites sort parameter to newest.
-                            cutoff (int): parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to newest.
+                            start (int): parameter specifies the start timestamp value for reviews (newest review). The current timestamp is used when the value is not provided. Using the start parameter overwrites sort parameter to newest.
+                            cutoff (int): parameter specifies the maximum timestamp value for reviews (oldest review). Using the cutoff parameter overwrites sort parameter to newest.
                             cutoff_rating (int): parameter specifies the maximum (for lowest_rating sorting) or minimum (for highest_rating sorting) rating for reviews. Using the cutoffRating requires sorting to be set to "lowest_rating" or "highest_rating".
                             ignore_empty (bool): parameter specifies whether to ignore reviews without text or not.
                             reviews_query (str): parameter specifies the query to search among the reviews (e.g. wow, amazing, horrible place).
