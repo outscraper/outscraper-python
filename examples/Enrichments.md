@@ -1,6 +1,6 @@
 # Using Enrichments Python
 
-Using enrichments with [Outscraper API](https://app.outscraper.com/api-docs#tag/Google-Maps).
+Using enrichments with [Outscraper API](https://app.outscraper.com/api-docs).
 
 ## Installation
 
