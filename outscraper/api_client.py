@@ -206,7 +206,7 @@ class ApiClient(object):
         raise Exception(f'Response status code: {response.status_code}')
 
     def google_maps_search(self, query: Union[list, str], limit: int = 20, drop_duplicates: bool = False,
-        language: str = 'en', region: str = None, skip: int = 0, enrichment: list = None, fields: list = None, async_request: bool = False
+        language: str = 'en', region: str = None, skip: int = 0, enrichment: list = None, fields: list = None, async_request: bool = False, ui: bool = None
     ) -> Union[list, dict]:
         '''
             Get Google Maps Data V2 (speed optimized endpoint for real time data)
@@ -225,6 +225,7 @@ class ApiClient(object):
                             enrichment (list): parameter defines enrichments you want to apply to the results. Available values: "domains_service", "emails_validator_service", "disposable_email_checker", "whatsapp_checker", "imessage_checker", "phones_enricher_service", "trustpilot_service", "companies_data".
                             fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
 
                     Returns:
                             list: json result
@@ -244,6 +245,7 @@ class ApiClient(object):
             'async': wait_async,
             'enrichment': as_list(enrichment) if enrichment else '',
             'fields': ','.join(fields) if fields else '',
+            'ui': ui,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
@@ -341,7 +343,7 @@ class ApiClient(object):
 
     def google_maps_reviews(self, query: Union[list, str], reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
         skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
-        language: str = 'en', region: str = None, reviews_query: str = None, fields: list = None, async_request: bool = False
+        language: str = 'en', region: str = None, reviews_query: str = None, fields: list = None, async_request: bool = False, ui: bool = None
     ) -> Union[list, dict]:
         '''
             Get Google Maps Reviews V3 (speed optimized endpoint for real time data)
@@ -366,6 +368,7 @@ class ApiClient(object):
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
                             fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
 
                     Returns:
                             list: json result
@@ -390,6 +393,7 @@ class ApiClient(object):
             'region': region,
             'async': wait_async,
             'fields': ','.join(fields) if fields else '',
+            'ui': ui,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
