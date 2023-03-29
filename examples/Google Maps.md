@@ -1,6 +1,7 @@
 # Google Maps Scraper With Python
 
 The library provides real-time access to the places from Google Maps via [Outscraper API](https://app.outscraper.com/api-docs#tag/Google-Maps).
+It allows easy scraping of [businesses information](https://outscraper.com/google-maps-scraper/#dictionary) from Google Maps.
 
 ## Installation
 
