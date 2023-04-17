@@ -104,7 +104,7 @@ class ApiClient(object):
             Get data from Google search
 
                     Parameters:
-                            query (list | str): parameter defines the query or queries you want to search on Google. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
+                            query (list | str): parameter defines the query or queries you want to search on Google. Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             pages_per_query (int): parameter specifies the limit of pages to return from one query.
                             uule (str): Google UULE parameter is used to encode a place or an exact location (with latitude and longitude) into a code. By using it you can see a Google result page like someone located at the specified location.
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
@@ -137,7 +137,7 @@ class ApiClient(object):
             Returns search results from Google based on a given search query (or many queries).
 
                     Parameters:
-                            query (list | str): parameter defines the query or queries you want to search news on Google. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
+                            query (list | str): parameter defines the query or queries you want to search news on Google. Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             pages_per_query (int): parameter specifies the limit of pages to return from one query.
                             uule (str): Google UULE parameter is used to encode a place or an exact location (with latitude and longitude) into a code. By using it you can see a Google result page like someone located at the specified location.
                             tbs: parameter specifies the date range of the results (h - past hour, d - past 24 hours, w - past week, m - past month, 'y' - past year).
@@ -175,7 +175,7 @@ class ApiClient(object):
             The results from searches are the same as you would see by visiting a regular Google Maps site. However, in most cases, it's recommended to use locations inside queries (e.g., bars, NY, USA) as the IP addresses of Outscraper's servers might be located in different countries.
 
                     Parameters:
-                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
+                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             limit (int): parameter specifies the limit of places to take from one query search. The same as on Google Maps site, there are no more than 400 organizations per one query search. Use more precise categories (e.g., Asian restaurant, Italian restaurant) and/or locations (e.g., restaurants, Brooklyn 11211, restaurants, Brooklyn 11215) to overcome this limitation.
                             extract_contacts (bool): parameter specifies whether the bot will scrape additional data (emails, social links, site keywords…) from companies’ websites. It increases the time of the extraction.
                             drop_duplicates (bool): parameter specifies whether the bot will drop the same organizations from different queries. Using the parameter combines results from each query inside one big array.
@@ -216,7 +216,7 @@ class ApiClient(object):
             This endpoint is optimized for fast responses and can be used as real time API. Set the limit parameter to 20 to achieve the maximum response speed.
 
                     Parameters:
-                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id. The example of valid queries: Real estate agency, Rome, Italy, The NoMad Restaurant, NY, USA, restaurants, Brooklyn 11203, 0x886916e8bc273979:0x5141fcb11460b226, etc. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
+                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id. The example of valid queries: Real estate agency, Rome, Italy, The NoMad Restaurant, NY, USA, restaurants, Brooklyn 11203, 0x886916e8bc273979:0x5141fcb11460b226, etc. Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             limit (int): parameter specifies the limit of places to take from one query search. The same as on Google Maps site, there are no more than 400 organizations per one query search. Use more precise categories (e.g., Asian restaurant, Italian restaurant) and/or locations (e.g., restaurants, Brooklyn 11211, restaurants, Brooklyn 11215) to overcome this limitation.
                             skip (int): skip first N places, where N should be multiple to 20 (e.g. 0, 20, 40). It's commonly used in pagination.
                             drop_duplicates (bool): parameter specifies whether the bot will drop the same organizations from different queries. Using the parameter combines results from each query inside one big array.
@@ -259,7 +259,7 @@ class ApiClient(object):
             Returns directions between two points from Google Maps.
 
                     Parameters:
-                            query (list | str): parameter defines the query that should contains "<origin> + <4 spaces> + <destination>". Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
+                            query (list | str): parameter defines the query that should contains "<origin> + <4 spaces> + <destination>". Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             departure_time (int): parameter specifies the departure timestamp. The current timestamp is used when the value is not provided.
                             finish_time (int): parameter specifies the end departure timestamp. Using this parameter requires using the interval parameter.
                             interval (int): parameter specifies the interval to use between departure_time and finish_time.
@@ -301,7 +301,7 @@ class ApiClient(object):
             Places information will be returned as well in the case at least one review is found.
 
                     Parameters:
-                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
+                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             reviews_limit (int): parameter specifies the limit of reviews to extract from one place.
                             limit (str): parameter specifies the limit of places to take from one query search.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
@@ -353,7 +353,7 @@ class ApiClient(object):
             This endpoint is optimized for fast responses and can be used as real time API. Set the reviews_limit parameter to 10 to achieve the maximum response speed.
 
                     Parameters:
-                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
+                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             reviews_limit (int): parameter specifies the limit of reviews to extract from one place.
                             limit (str): parameter specifies the limit of places to take from one query search.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
@@ -405,7 +405,7 @@ class ApiClient(object):
             Get reviews from Google Maps
 
                     Parameters:
-                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
+                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             photosLimit (int): parameter specifies the limit of photos to extract from one place.
                             limit (str): parameter specifies the limit of places to take from one query search.
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
@@ -441,7 +441,7 @@ class ApiClient(object):
             Returns reviews from any app/book/movie in the Google Play store.
 
                     Parameters:
-                            query (list | str): you can use app IDs or direct links (e.g., https://play.google.com/store/apps/details?id=com.facebook.katana, com.facebook.katana). Using a lists allows multiple queries (up to 25) to be sent in one request and save on network latency time.
+                            query (list | str): you can use app IDs or direct links (e.g., https://play.google.com/store/apps/details?id=com.facebook.katana, com.facebook.katana). Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             reviews_limit (int): parameter specifies the limit of reviews to extract from one query.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "rating".
                             cutoff (int): parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to "newest".
@@ -574,6 +574,109 @@ class ApiClient(object):
             'sort': sort,
             'filterByReviewer': filter_by_reviewer,
             'filterByStar': filter_by_star,
+            'async': wait_async,
+            'fields': ','.join(fields) if fields else '',
+            'ui': ui,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, wait_async, async_request)
+
+    def yelp_search(self, query: Union[list, str], limit: int = 100,
+        fields: list = None, async_request: bool = False, ui: bool = None
+    ) -> Union[list, dict]:
+        '''
+            Yelp
+
+            Return search results from Yelp.
+
+                    Parameters:
+                            query (list | str): parameter defines search links with search parameters (e.g., "https://www.yelp.com/search?find_desc=Restaurants&find_loc=San+Francisco%2C+CA"). Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
+                            limit (int): parameter specifies the limit of items to get from one query.
+                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Yelp/paths/~1yelp-search/get
+        '''
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 10
+
+        response = requests.get(f'{self._api_url}/yelp-search', params={
+            'query': queries,
+            'limit': limit,
+            'async': wait_async,
+            'fields': ','.join(fields) if fields else '',
+            'ui': ui,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, wait_async, async_request)
+
+    def yelp_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'relevance_desc', cutoff: int = None,
+        fields: list = None, async_request: bool = False, ui: bool = None
+    ) -> Union[list, dict]:
+        '''
+            Yelp Reviews
+
+            Returns reviews from Yelp businesses.
+
+                    Parameters:
+                            query (list | str): parameter defines direct links, or IDs of any Yelp business (e.g., "https://www.yelp.com/biz/cancha-boutique-gastrobar-san-francisco", "eggcellent-waffles-san-francisco", "iXoLJWjbcXCO43RT-H0uQQ"). Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
+                            limit (int): parameter specifies the limit of reviews to get from one query.
+                            sort (str): parameter specifies one of the sorting types. Available values: "relevance_desc", "date_desc", "date_asc", "rating_desc", "rating_asc", "elites_desc".
+                            cutoff (int): parameter specifies the maximum timestamp value for reviews (oldest review). Using the "cutoff" parameter overwrites "sort" parameter to "date_desc".
+                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Yelp/paths/~1yelp~1reviews/get
+        '''
+        queries = as_list(query)
+        wait_async = async_request or limit > 499 or len(queries) > 10
+
+        response = requests.get(f'{self._api_url}/yelp/reviews', params={
+            'query': queries,
+            'limit': limit,
+            'sort': sort,
+            'cutoff': cutoff,
+            'async': wait_async,
+            'fields': ','.join(fields) if fields else '',
+            'ui': ui,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, wait_async, async_request)
+
+    def tripadvisor_reviews(self, query: Union[list, str], limit: int = 100,
+        fields: list = None, async_request: bool = False, ui: bool = None
+    ) -> Union[list, dict]:
+        '''
+            Tripadvisor Reviews
+
+            Returns reviews from Tripadvisor businesses.
+
+                    Parameters:
+                            query (list | str): parameter defines links to Tripadvisor pages (e.g., "https://www.tripadvisor.com/Restaurant_Review-g187147-d12947099-Reviews-Mayfair_Garden-Paris_Ile_de_France.html"). Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
+                            limit (int): parameter specifies the limit of reviews to get from one query.
+                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Tripadvisor/paths/~1tripadvisor~1reviews/get
+        '''
+        queries = as_list(query)
+        wait_async = async_request or limit > 499 or len(queries) > 10
+
+        response = requests.get(f'{self._api_url}/tripadvisor/reviews', params={
+            'query': queries,
+            'limit': limit,
             'async': wait_async,
             'fields': ','.join(fields) if fields else '',
             'ui': ui,
