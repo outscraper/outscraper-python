@@ -9,6 +9,7 @@ It allows scraping all the reviews from any place on Google Maps within seconds.
 
 ### Advanced Parameter
 
+![screencast](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2M3OWRhZTI1NzBhNjZlNGY4NmVlOTIzNTQ3MGZhOTQyYTIzNjY0MyZjdD1n/70a8jRmg5xuTjl3yuF/giphy.gif)
 
 ## Installation
 
