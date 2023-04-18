@@ -4,7 +4,6 @@ The library provides convenient access to the [Outscraper API](https://app.outsc
 
 [API Docs](https://app.outscraper.com/api-docs)
 
-
 ![screencast](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2M3OWRhZTI1NzBhNjZlNGY4NmVlOTIzNTQ3MGZhOTQyYTIzNjY0MyZjdD1n/70a8jRmg5xuTjl3yuF/giphy.gif)
 
 ## Installation
