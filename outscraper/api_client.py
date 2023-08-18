@@ -206,7 +206,8 @@ class ApiClient(object):
         raise Exception(f'Response status code: {response.status_code}')
 
     def google_maps_search(self, query: Union[list, str], limit: int = 20, drop_duplicates: bool = False,
-        language: str = 'en', region: str = None, skip: int = 0, enrichment: list = None, fields: list = None, async_request: bool = False, ui: bool = None
+        language: str = 'en', region: str = None, skip: int = 0, enrichment: list = None, fields: list = None, async_request: bool = False,
+        ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Get Google Maps Data V2 (speed optimized endpoint for real time data)
@@ -246,6 +247,7 @@ class ApiClient(object):
             'enrichment': as_list(enrichment) if enrichment else '',
             'fields': ','.join(fields) if fields else '',
             'ui': ui,
+            'webhook': webhook,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
@@ -343,7 +345,8 @@ class ApiClient(object):
 
     def google_maps_reviews(self, query: Union[list, str], reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
         skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
-        language: str = 'en', region: str = None, reviews_query: str = None, fields: list = None, async_request: bool = False, ui: bool = None
+        language: str = 'en', region: str = None, reviews_query: str = None, fields: list = None, async_request: bool = False,
+        ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Get Google Maps Reviews V3 (speed optimized endpoint for real time data)
@@ -394,6 +397,7 @@ class ApiClient(object):
             'async': wait_async,
             'fields': ','.join(fields) if fields else '',
             'ui': ui,
+            'webhook': webhook,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
@@ -515,7 +519,8 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def amazon_products(self, query: Union[list, str], limit: int = 24, fields: list = None, async_request: bool = False, ui: bool = None
+    def amazon_products(self, query: Union[list, str], limit: int = 24, fields: list = None, async_request: bool = False,
+        ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Returns information about products on Amazon.
@@ -541,11 +546,13 @@ class ApiClient(object):
             'async': wait_async,
             'fields': ','.join(fields) if fields else '',
             'ui': ui,
+            'webhook': webhook,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
 
-    def amazon_reviews(self, query: Union[list, str], limit: int = 10, sort: str = 'helpful', filter_by_reviewer: str = 'all_reviews', filter_by_star: str = 'all_stars', fields: list = None, async_request: bool = False, ui: bool = None
+    def amazon_reviews(self, query: Union[list, str], limit: int = 10, sort: str = 'helpful', filter_by_reviewer: str = 'all_reviews',
+        filter_by_star: str = 'all_stars', fields: list = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Returns reviews from Amazon products.
@@ -577,12 +584,13 @@ class ApiClient(object):
             'async': wait_async,
             'fields': ','.join(fields) if fields else '',
             'ui': ui,
+            'webhook': webhook,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
 
     def yelp_search(self, query: Union[list, str], limit: int = 100,
-        fields: list = None, async_request: bool = False, ui: bool = None
+        fields: list = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Yelp
@@ -610,12 +618,13 @@ class ApiClient(object):
             'async': wait_async,
             'fields': ','.join(fields) if fields else '',
             'ui': ui,
+            'webhook': webhook,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
 
     def yelp_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'relevance_desc', cutoff: int = None,
-        fields: list = None, async_request: bool = False, ui: bool = None
+        fields: list = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Yelp Reviews
@@ -647,12 +656,13 @@ class ApiClient(object):
             'async': wait_async,
             'fields': ','.join(fields) if fields else '',
             'ui': ui,
+            'webhook': webhook,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
 
     def tripadvisor_reviews(self, query: Union[list, str], limit: int = 100,
-        fields: list = None, async_request: bool = False, ui: bool = None
+        fields: list = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Tripadvisor Reviews
@@ -680,6 +690,7 @@ class ApiClient(object):
             'async': wait_async,
             'fields': ','.join(fields) if fields else '',
             'ui': ui,
+            'webhook': webhook,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
