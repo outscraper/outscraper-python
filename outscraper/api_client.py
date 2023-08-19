@@ -2,7 +2,7 @@ import requests
 from time import sleep
 from typing import Union
 
-from .utils import as_list
+from .utils import as_list, parse_fields
 
 
 class ApiClient(object):
@@ -99,7 +99,9 @@ class ApiClient(object):
 
         raise Exception('Timeout exceeded')
 
-    def google_search(self, query: Union[list, str], pages_per_query: int = 1, uule: str = None, language: str = 'en', region: str = None, fields: list = None, async_request: bool = False) -> Union[list, dict]:
+    def google_search(self, query: Union[list, str], pages_per_query: int = 1, uule: str = None, language: str = 'en', region: str = None,
+        fields: Union[list, str] = None, async_request: bool = False
+    ) -> Union[list, dict]:
         '''
             Get data from Google search
 
@@ -109,7 +111,7 @@ class ApiClient(object):
                             uule (str): Google UULE parameter is used to encode a place or an exact location (with latitude and longitude) into a code. By using it you can see a Google result page like someone located at the specified location.
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
 
                     Returns:
@@ -127,12 +129,12 @@ class ApiClient(object):
             'language': language,
             'region': region,
             'async': async_request,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
 
-    def google_search_news(self, query: list, pages_per_query: int = 1, uule: str = None, tbs: str = None, language: str = 'en', region: str = None, fields: list = None) -> list:
+    def google_search_news(self, query: Union[list, str], pages_per_query: int = 1, uule: str = None, tbs: str = None, language: str = 'en', region: str = None, fields: Union[list, str] = None) -> list:
         '''
             Returns search results from Google based on a given search query (or many queries).
 
@@ -143,7 +145,7 @@ class ApiClient(object):
                             tbs: parameter specifies the date range of the results (h - past hour, d - past 24 hours, w - past week, m - past month, 'y' - past year).
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
                             list: json result
@@ -157,7 +159,7 @@ class ApiClient(object):
             'tbs': tbs,
             'language': language,
             'region': region,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
@@ -165,8 +167,8 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_search_v1(self, query: list, limit: int = 500, extract_contacts: bool = False, drop_duplicates: bool = False,
-        coordinates: str = None, language: str = 'en', region: str = None, fields: list = None
+    def google_maps_search_v1(self, query: Union[list, str], limit: int = 500, extract_contacts: bool = False, drop_duplicates: bool = False,
+        coordinates: str = None, language: str = 'en', region: str = None, fields: Union[list, str] = None
     ) -> list:
         '''
             Get Google Maps Data (old verison)
@@ -182,7 +184,7 @@ class ApiClient(object):
                             coordinates (str): parameter defines the coordinates to use along with the query. Example: "@41.3954381,2.1628662,15.1z".
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
                             list: json result
@@ -197,7 +199,7 @@ class ApiClient(object):
             'organizationsPerQueryLimit': limit,
             'extractContacts': extract_contacts,
             'dropDuplicates': drop_duplicates,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
@@ -206,8 +208,8 @@ class ApiClient(object):
         raise Exception(f'Response status code: {response.status_code}')
 
     def google_maps_search(self, query: Union[list, str], limit: int = 20, drop_duplicates: bool = False,
-        language: str = 'en', region: str = None, skip: int = 0, enrichment: list = None, fields: list = None, async_request: bool = False,
-        ui: bool = None, webhook: bool = None
+        language: str = 'en', region: str = None, skip: int = 0, enrichment: list = None, fields: Union[list, str] = None,
+        async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Get Google Maps Data V2 (speed optimized endpoint for real time data)
@@ -224,7 +226,7 @@ class ApiClient(object):
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
                             enrichment (list): parameter defines enrichments you want to apply to the results. Available values: "domains_service", "emails_validator_service", "disposable_email_checker", "whatsapp_checker", "imessage_checker", "phones_enricher_service", "trustpilot_service", "companies_data".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
                             ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
 
@@ -245,15 +247,15 @@ class ApiClient(object):
             'dropDuplicates': drop_duplicates,
             'async': wait_async,
             'enrichment': as_list(enrichment) if enrichment else '',
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
 
-    def google_maps_directions(self, query: list, departure_time: int = None, finish_time: int = None, interval: int = 60,
-        language: str = 'en', region: str = None, async_request: bool = False, fields: list = None
+    def google_maps_directions(self, query: Union[list, str], departure_time: int = None, finish_time: int = None, interval: int = 60,
+        language: str = 'en', region: str = None, async_request: bool = False, fields: Union[list, str] = None
     ) -> list:
         '''
             Get Google Maps Directions
@@ -267,7 +269,7 @@ class ApiClient(object):
                             interval (int): parameter specifies the interval to use between departure_time and finish_time.
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
                             list: json result
@@ -277,11 +279,12 @@ class ApiClient(object):
         response = requests.get(f'{self._api_url}/maps/directions', params={
             'query': as_list(query),
             'departure_time': departure_time,
+            'interval': interval,
             'finish_time': finish_time,
             'language': language,
             'region': region,
             'async': async_request,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
@@ -292,9 +295,9 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_reviews_v2(self, query: list, reviews_limit: int = 100, limit: int = 1, sort: str = 'most_relevant',
+    def google_maps_reviews_v2(self, query: Union[list, str], reviews_limit: int = 100, limit: int = 1, sort: str = 'most_relevant',
         skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
-        coordinates: str = None, language: str = 'en', region: str = None, fields: list = None
+        coordinates: str = None, language: str = 'en', region: str = None, fields: Union[list, str] = None
     ) -> list:
         '''
             Get Google Maps Reviews (old verison)
@@ -315,7 +318,7 @@ class ApiClient(object):
                             coordinates (str): parameter defines the coordinates of the location where you want your query to be applied. It has to be constructed in the next sequence: "@" + "latitude" + "," + "longitude" + "," + "zoom" (e.g. "@41.3954381,2.1628662,15.1z").
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
                             list: json result
@@ -335,7 +338,7 @@ class ApiClient(object):
             'coordinates': coordinates,
             'language': language,
             'region': region,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
@@ -345,7 +348,7 @@ class ApiClient(object):
 
     def google_maps_reviews(self, query: Union[list, str], reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
         skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
-        language: str = 'en', region: str = None, reviews_query: str = None, fields: list = None, async_request: bool = False,
+        language: str = 'en', region: str = None, reviews_query: str = None, fields: Union[list, str] = None, async_request: bool = False,
         ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
@@ -369,7 +372,7 @@ class ApiClient(object):
                             coordinates (str): parameter defines the coordinates of the location where you want your query to be applied. It has to be constructed in the next sequence: "@" + "latitude" + "," + "longitude" + "," + "zoom" (e.g. "@41.3954381,2.1628662,15.1z").
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
                             ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
 
@@ -395,15 +398,15 @@ class ApiClient(object):
             'language': language,
             'region': region,
             'async': wait_async,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
 
-    def google_maps_photos(self, query: list, photosLimit: int = 100, limit: int = 1,
-        language: str = 'en', region: str = None, fields: list = None
+    def google_maps_photos(self, query: Union[list, str], photosLimit: int = 100, limit: int = 1,
+        language: str = 'en', region: str = None, fields: Union[list, str] = None
     ) -> list:
         '''
             Get reviews from Google Maps
@@ -414,7 +417,7 @@ class ApiClient(object):
                             limit (str): parameter specifies the limit of places to take from one query search.
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
                             region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
                             list: json result
@@ -427,7 +430,7 @@ class ApiClient(object):
             'limit': limit,
             'language': language,
             'region': region,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
@@ -438,8 +441,8 @@ class ApiClient(object):
     def google_maps_business_reviews(self, *args, **kwargs) -> list: # deprecated
         return self.google_maps_reviews(*args, **kwargs)
 
-    def google_play_reviews(self, query: list, reviews_limit: int = 100, sort: str = 'most_relevant', cutoff: int = None,
-        rating: int = None, language: str = 'en', fields: list = None
+    def google_play_reviews(self, query: Union[list, str], reviews_limit: int = 100, sort: str = 'most_relevant', cutoff: int = None,
+        rating: int = None, language: str = 'en', fields: Union[list, str] = None
     ) -> list:
         '''
             Returns reviews from any app/book/movie in the Google Play store.
@@ -451,7 +454,7 @@ class ApiClient(object):
                             cutoff (int): parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to "newest".
                             rating (int): Filter by a specific rating. Works only with "sort=rating".
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
                             list: json result
@@ -465,7 +468,7 @@ class ApiClient(object):
             'cutoff': cutoff,
             'rating': rating,
             'language': language,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
@@ -473,13 +476,13 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def emails_and_contacts(self, query: list, fields: list = None) -> list:
+    def emails_and_contacts(self, query: Union[list, str], fields: Union[list, str] = None) -> list:
         '''
             Return email addresses, social links and phones from domains in seconds.
 
                     Parameters:
                             query (list | str): Domains or links (e.g., outscraper.com).
-                            fields (list): Parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): Parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
                             list: json result
@@ -488,7 +491,7 @@ class ApiClient(object):
         '''
         response = requests.get(f'{self._api_url}/emails-and-contacts', params={
             'query': as_list(query),
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
@@ -496,13 +499,13 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def phones_enricher(self, query: list, fields: list = None) -> list:
+    def phones_enricher(self, query: Union[list, str], fields: Union[list, str] = None) -> list:
         '''
             Returns phones carrier data (name/type), validates phones, ensures messages deliverability.
 
                     Parameters:
                             query (list | str): Phone number (e.g., +1 281 236 8208).
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
                             list: json result
@@ -511,7 +514,7 @@ class ApiClient(object):
         '''
         response = requests.get(f'{self._api_url}/phones-enricher', params={
             'query': as_list(query),
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
         }, headers=self._api_headers)
 
         if 199 < response.status_code < 300:
@@ -519,7 +522,7 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def amazon_products(self, query: Union[list, str], limit: int = 24, fields: list = None, async_request: bool = False,
+    def amazon_products(self, query: Union[list, str], limit: int = 24, fields: Union[list, str] = None, async_request: bool = False,
         ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
@@ -528,7 +531,7 @@ class ApiClient(object):
                     Parameters:
                             query (list | str): Amazon product or summary pages URLs.
                             limit (int): The parameter specifies the limit of products to get from one query (in case of using summary pages).
-                            fields (list): Parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): Parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): Parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
                             ui (bool): Parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
 
@@ -544,7 +547,7 @@ class ApiClient(object):
             'query': queries,
             'limit': limit,
             'async': wait_async,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
         }, headers=self._api_headers)
@@ -552,7 +555,7 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
     def amazon_reviews(self, query: Union[list, str], limit: int = 10, sort: str = 'helpful', filter_by_reviewer: str = 'all_reviews',
-        filter_by_star: str = 'all_stars', fields: list = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+        filter_by_star: str = 'all_stars', fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Returns reviews from Amazon products.
@@ -563,7 +566,7 @@ class ApiClient(object):
                             sort (str): Parameter specifies one of the sorting types. Available values: "helpful", and "recent".
                             filter_by_reviewer (str): The parameter specifies one of the reviewer filter types (All reviewers / Verified purchase only). Available values: "all_reviews", and "avp_only_reviews".
                             filter_by_star (str): The parameter specifies one of the filter types by stars. Available values: "all_stars", "five_star", "four_star", "three_star", "two_star", "one_star", "positive", and "critical".
-                            fields (list): Parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): Parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): Parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
                             ui (bool): Parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
 
@@ -582,7 +585,7 @@ class ApiClient(object):
             'filterByReviewer': filter_by_reviewer,
             'filterByStar': filter_by_star,
             'async': wait_async,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
         }, headers=self._api_headers)
@@ -590,7 +593,7 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
     def yelp_search(self, query: Union[list, str], limit: int = 100,
-        fields: list = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Yelp
@@ -600,7 +603,7 @@ class ApiClient(object):
                     Parameters:
                             query (list | str): parameter defines search links with search parameters (e.g., "https://www.yelp.com/search?find_desc=Restaurants&find_loc=San+Francisco%2C+CA"). Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             limit (int): parameter specifies the limit of items to get from one query.
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
                             ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
 
@@ -616,7 +619,7 @@ class ApiClient(object):
             'query': queries,
             'limit': limit,
             'async': wait_async,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
         }, headers=self._api_headers)
@@ -624,7 +627,7 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
     def yelp_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'relevance_desc', cutoff: int = None,
-        fields: list = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Yelp Reviews
@@ -636,7 +639,7 @@ class ApiClient(object):
                             limit (int): parameter specifies the limit of reviews to get from one query.
                             sort (str): parameter specifies one of the sorting types. Available values: "relevance_desc", "date_desc", "date_asc", "rating_desc", "rating_asc", "elites_desc".
                             cutoff (int): parameter specifies the maximum timestamp value for reviews (oldest review). Using the "cutoff" parameter overwrites "sort" parameter to "date_desc".
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
                             ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
 
@@ -654,7 +657,7 @@ class ApiClient(object):
             'sort': sort,
             'cutoff': cutoff,
             'async': wait_async,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
         }, headers=self._api_headers)
@@ -662,7 +665,7 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
     def tripadvisor_reviews(self, query: Union[list, str], limit: int = 100,
-        fields: list = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Tripadvisor Reviews
@@ -672,7 +675,7 @@ class ApiClient(object):
                     Parameters:
                             query (list | str): parameter defines links to Tripadvisor pages (e.g., "https://www.tripadvisor.com/Restaurant_Review-g187147-d12947099-Reviews-Mayfair_Garden-Paris_Ile_de_France.html"). Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
                             limit (int): parameter specifies the limit of reviews to get from one query.
-                            fields (list): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
                             ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
 
@@ -688,7 +691,7 @@ class ApiClient(object):
             'query': queries,
             'limit': limit,
             'async': wait_async,
-            'fields': ','.join(fields) if fields else '',
+            'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
         }, headers=self._api_headers)
