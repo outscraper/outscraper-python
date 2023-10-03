@@ -1,6 +1,6 @@
 import requests
 from time import sleep
-from typing import Union
+from typing import Union, Tuple
 
 from .utils import as_list, parse_fields
 
@@ -28,6 +28,32 @@ class ApiClient(object):
             'client': f'Python SDK'
         }
         self._requests_pause = requests_pause
+
+    def get_tasks(self, query: str = '', last_id: str = '', page_size: int = 10) -> Tuple[list, bool]:
+        '''
+            Fetch user UI tasks.
+
+                    Parameters:
+                            query (str): parameter specifies the search query (tag).
+                            last_id (str): parameter specifies the last task ID. It's commonly used in pagination.
+                            page_size (str): parameter specifies the number of items to return.
+
+                    Returns:
+                            list: requests history
+
+            See: https://app.outscraper.com/api-docs#tag/Outscraper-Platform-UI/paths/~1tasks/get
+        '''
+        response = requests.get(f'{self._api_url}/tasks?query={query}&lastId={last_id}&pageSize={page_size}', headers=self._api_headers)
+
+        if 199 < response.status_code < 300:
+            data = response.json()
+
+            if 'errorMessage' in data:
+                raise Exception(f'Error: {data["errorMessage"]}')
+
+            return data['tasks'], data['has_more']
+
+        raise Exception(f'Response status code: {response.status_code}')
 
     def get_requests_history(self, type: str = 'running') -> list:
         '''
