@@ -373,8 +373,8 @@ class ApiClient(object):
         raise Exception(f'Response status code: {response.status_code}')
 
     def google_maps_reviews(self, query: Union[list, str], reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
-        skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
-        language: str = 'en', region: str = None, reviews_query: str = None, fields: Union[list, str] = None, async_request: bool = False,
+        start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False, language: str = 'en',
+        region: str = None, reviews_query: str = None, last_pagination_id: str = None, fields: Union[list, str] = None, async_request: bool = False,
         ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
@@ -389,11 +389,11 @@ class ApiClient(object):
                             reviews_limit (int): parameter specifies the limit of reviews to extract from one place.
                             limit (str): parameter specifies the limit of places to take from one query search.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
-                            skip (int): parameter specifies the number of items to skip. It's commonly used in pagination.
                             start (int): parameter specifies the start timestamp value for reviews (newest review). The current timestamp is used when the value is not provided. Using the start parameter overwrites sort parameter to newest.
                             cutoff (int): parameter specifies the maximum timestamp value for reviews (oldest review). Using the cutoff parameter overwrites sort parameter to newest.
                             cutoff_rating (int): parameter specifies the maximum (for lowest_rating sorting) or minimum (for highest_rating sorting) rating for reviews. Using the cutoffRating requires sorting to be set to "lowest_rating" or "highest_rating".
                             ignore_empty (bool): parameter specifies whether to ignore reviews without text or not.
+                            last_pagination_id (str): parameter specifies the review_pagination_id of the last item. It's commonly used in pagination.
                             reviews_query (str): parameter specifies the query to search among the reviews (e.g. wow, amazing, horrible place).
                             coordinates (str): parameter defines the coordinates of the location where you want your query to be applied. It has to be constructed in the next sequence: "@" + "latitude" + "," + "longitude" + "," + "zoom" (e.g. "@41.3954381,2.1628662,15.1z").
                             language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
@@ -415,10 +415,10 @@ class ApiClient(object):
             'reviewsLimit': reviews_limit,
             'limit': limit,
             'sort': sort,
-            'skip': skip,
             'start': start,
             'cutoff': cutoff,
             'reviewsQuery': reviews_query,
+            'lastPaginationId': last_pagination_id,
             'cutoffRating': cutoff_rating,
             'ignoreEmpty': ignore_empty,
             'language': language,
