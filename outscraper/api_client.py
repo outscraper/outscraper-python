@@ -389,7 +389,7 @@ class ApiClient(object):
 
                     Parameters:
                             query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 50) to be sent in one request and save on network latency time.
-                            reviews_limit (int): parameter specifies the limit of reviews to extract from one place.
+                            reviews_limit (int): parameter specifies the limit of reviews to extract from one place (0 - unlimited).
                             limit (str): parameter specifies the limit of places to take from one query search.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
                             start (int): parameter specifies the start timestamp value for reviews (newest review). The current timestamp is used when the value is not provided. Using the start parameter overwrites sort parameter to newest.
@@ -411,7 +411,7 @@ class ApiClient(object):
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1reviews-v3/get
         '''
         queries = as_list(query)
-        wait_async = async_request or reviews_limit > 499 or len(queries) > 10
+        wait_async = async_request or reviews_limit > 499 or reviews_limit == 0 or len(queries) > 10
 
         response = requests.get(f'{self._api_url}/maps/reviews-v3', params={
             'query': queries,
