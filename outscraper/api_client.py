@@ -730,3 +730,35 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
+
+
+    def apple_store_reviews(self, query: Union[list, str], reviews_limit: int = 100, 
+        sort: str = 'mosthelpful', cutoff: int = None,fields: Union[list, str] = None
+    ) -> list:
+        '''
+            Returns reviews from any app/book/movie in the Google Play store.
+
+                    Parameters:
+                            query (list | str): you can use direct links, and IDs of any AppStore app (e.g., https://apps.apple.com/us/app/telegram-messenger/id686449807, id686449807). Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
+                            reviews_limit (int): parameter specifies the limit of reviews to extract from one query.
+                            sort (str): parameter specifies one of the sorting types. Available values: "mosthelpful", "mostrecent".
+                            cutoff (int): parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to "newest".
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Reviews-and-Comments/paths/~1appstore~1reviews/get
+        '''
+        response = requests.get(f'{self._api_url}/appstore/reviews', params={
+            'query': as_list(query),
+            'limit': reviews_limit,
+            'sort': sort,
+            'cutoff': cutoff,
+            'fields': parse_fields(fields),
+        }, headers=apiClient._api_headers)
+
+        if 199 < response.status_code < 300:
+            return self._wait_request_archive(response.json()['id']).get('data', [])
+
+        raise Exception(f'Response status code: {response.status_code}')
