@@ -732,18 +732,20 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
 
-    def apple_store_reviews(self, query: Union[list, str], reviews_limit: int = 100, 
-        sort: str = 'mosthelpful', cutoff: int = None,fields: Union[list, str] = None
+    def apple_store_reviews(self, query: Union[list, str], limit: int = 100, 
+        sort: str = 'mosthelpful', cutoff: int = None, fields: Union[list, str] = Nonem, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> list:
         '''
-            Returns reviews from any app/book/movie in the Google Play store.
+            Returns reviews from AppStore apps.
 
                     Parameters:
                             query (list | str): you can use direct links, and IDs of any AppStore app (e.g., https://apps.apple.com/us/app/telegram-messenger/id686449807, id686449807). Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
-                            reviews_limit (int): parameter specifies the limit of reviews to extract from one query.
+                            limit (int): parameter specifies the limit of reviews to extract from one query.
                             sort (str): parameter specifies one of the sorting types. Available values: "mosthelpful", "mostrecent".
                             cutoff (int): parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to "newest".
                             fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
 
                     Returns:
                             list: json result
@@ -752,10 +754,12 @@ class ApiClient(object):
         '''
         response = requests.get(f'{self._api_url}/appstore/reviews', params={
             'query': as_list(query),
-            'limit': reviews_limit,
+            'limit': limit,
             'sort': sort,
             'cutoff': cutoff,
             'fields': parse_fields(fields),
+            'ui': ui,
+            'webhook': webhook,
         }, headers=apiClient._api_headers)
 
         if 199 < response.status_code < 300:
