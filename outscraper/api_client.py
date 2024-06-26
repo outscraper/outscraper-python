@@ -697,7 +697,7 @@ class ApiClient(object):
 
         return self._handle_response(response, wait_async, async_request)
 
-    def tripadvisor_reviews(self, query: Union[list, str], limit: int = 100,
+    def tripadvisor_reviews(self, query: Union[list, str], limit: int = 100, cutoff: int = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
@@ -723,6 +723,44 @@ class ApiClient(object):
         response = requests.get(f'{self._api_url}/tripadvisor/reviews', params={
             'query': queries,
             'limit': limit,
+            'cutoff': cutoff,
+            'async': wait_async,
+            'fields': parse_fields(fields),
+            'ui': ui,
+            'webhook': webhook,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, wait_async, async_request)
+
+    def apple_store_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'mosthelpful', cutoff: int = None,
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+    ) -> list:
+        '''
+            Returns reviews from AppStore apps.
+
+                    Parameters:
+                            query (list | str): you can use direct links, and IDs of any AppStore app (e.g., https://apps.apple.com/us/app/telegram-messenger/id686449807, id686449807). Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
+                            limit (int): parameter specifies the limit of reviews to extract from one query.
+                            sort (str): parameter specifies one of the sorting types. Available values: "mosthelpful", "mostrecent".
+                            cutoff (int): parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to "newest".
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Reviews-and-Comments/paths/~1appstore~1reviews/get
+        '''
+
+        queries = as_list(query)
+        wait_async = async_request or limit > 499 or len(queries) > 10
+
+        response = requests.get(f'{self._api_url}/appstore/reviews', params={
+            'query': queries,
+            'limit': limit,
+            'sort': sort,
+            'cutoff': cutoff,
             'async': wait_async,
             'fields': parse_fields(fields),
             'ui': ui,
