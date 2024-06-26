@@ -697,7 +697,7 @@ class ApiClient(object):
 
         return self._handle_response(response, wait_async, async_request)
 
-    def tripadvisor_reviews(self, query: Union[list, str], limit: int = 100,
+    def tripadvisor_reviews(self, query: Union[list, str], limit: int = 100, cutoff: int = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
@@ -723,6 +723,7 @@ class ApiClient(object):
         response = requests.get(f'{self._api_url}/tripadvisor/reviews', params={
             'query': queries,
             'limit': limit,
+            'cutoff': cutoff,
             'async': wait_async,
             'fields': parse_fields(fields),
             'ui': ui,
@@ -731,9 +732,8 @@ class ApiClient(object):
 
         return self._handle_response(response, wait_async, async_request)
 
-
-    def apple_store_reviews(self, query: Union[list, str], limit: int = 100, 
-        sort: str = 'mosthelpful', cutoff: int = None, fields: Union[list, str] = Nonem, async_request: bool = False, ui: bool = None, webhook: bool = None
+    def apple_store_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'mosthelpful', cutoff: int = None,
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> list:
         '''
             Returns reviews from AppStore apps.
@@ -752,17 +752,19 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Reviews-and-Comments/paths/~1appstore~1reviews/get
         '''
+
+        queries = as_list(query)
+        wait_async = async_request or limit > 499 or len(queries) > 10
+
         response = requests.get(f'{self._api_url}/appstore/reviews', params={
-            'query': as_list(query),
+            'query': queries,
             'limit': limit,
             'sort': sort,
             'cutoff': cutoff,
+            'async': wait_async,
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=apiClient._api_headers)
+        }, headers=self._api_headers)
 
-        if 199 < response.status_code < 300:
-            return self._wait_request_archive(response.json()['id']).get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
+        return self._handle_response(response, wait_async, async_request)
