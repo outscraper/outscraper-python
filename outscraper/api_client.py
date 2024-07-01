@@ -36,7 +36,7 @@ class ApiClient(object):
                     Parameters:
                             query (str): parameter specifies the search query (tag).
                             last_id (str): parameter specifies the last task ID. It's commonly used in pagination.
-                            page_size (str): parameter specifies the number of items to return.
+                            page_size (int): parameter specifies the number of items to return.
 
                     Returns:
                             list: requests history
@@ -55,19 +55,21 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def get_requests_history(self, type: str = 'running') -> list:
+    def get_requests_history(self, type: str = 'running', skip: int = 0, page_size: int = 25) -> list:
         '''
             Fetch up to 100 of your last requests.
 
                     Parameters:
                             type (str): parameter allows you to filter requests by type (running/finished).
+                            skip (int): skip first N records. It's commonly used in pagination.
+                            page_size (int): parameter specifies the number of items to return.
 
                     Returns:
                             list: requests history
 
             See: https://app.outscraper.com/api-docs#tag/Requests/paths/~1requests/get
         '''
-        response = requests.get(f'{self._api_url}/requests?type={type}', headers=self._api_headers)
+        response = requests.get(f'{self._api_url}/requests?type={type}&skip={skip}&pageSize={page_size}', headers=self._api_headers)
 
         if 199 < response.status_code < 300:
             return response.json()
