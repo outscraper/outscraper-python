@@ -555,7 +555,7 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def amazon_products(self, query: Union[list, str], limit: int = 24, fields: Union[list, str] = None, async_request: bool = False,
+    def amazon_products(self, query: Union[list, str], limit: int = 24, domain: str = 'amazon.com', postal_code: str = '11201', fields: Union[list, str] = None, async_request: bool = False,
         ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
@@ -566,6 +566,8 @@ class ApiClient(object):
                     Parameters:
                             query (list | str): Amazon product or summary pages URLs.
                             limit (int): The parameter specifies the limit of products to get from one query (in case of using summary pages).
+                            domain (str): The parameter specifies Amazon domain to use ("amazon.com", "amazon.co.uk", "amazon.ca", "amazon.de", "amazon.es", "amazon.fr", "amazon.it", "amazon.in", "amazon.nl", "amazon.se", "amazon.sa", "amazon.com.mx", "amazon.com.br", "amazon.co.jp", "amazon.pl").
+                            postal_code (str): The parameter specifies the postal code for delivery.
                             fields (list | str): Parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): Parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
                             ui (bool): Parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
@@ -581,6 +583,8 @@ class ApiClient(object):
         response = requests.get(f'{self._api_url}/amazon/products-v2', params={
             'query': queries,
             'limit': limit,
+            'domain': domain,
+            'postal_code': postal_code,
             'async': wait_async,
             'fields': parse_fields(fields),
             'ui': ui,
@@ -590,7 +594,7 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
     def amazon_reviews(self, query: Union[list, str], limit: int = 10, sort: str = 'helpful', filter_by_reviewer: str = 'all_reviews',
-        filter_by_star: str = 'all_stars', fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+        filter_by_star: str = 'all_stars', domain: str = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
     ) -> Union[list, dict]:
         '''
             Returns reviews from Amazon products.
@@ -601,6 +605,7 @@ class ApiClient(object):
                             sort (str): Parameter specifies one of the sorting types. Available values: "helpful", and "recent".
                             filter_by_reviewer (str): The parameter specifies one of the reviewer filter types (All reviewers / Verified purchase only). Available values: "all_reviews", and "avp_only_reviews".
                             filter_by_star (str): The parameter specifies one of the filter types by stars. Available values: "all_stars", "five_star", "four_star", "three_star", "two_star", "one_star", "positive", and "critical".
+                            domain (str): The parameter specifies Amazon domain to use ("amazon.com", "amazon.co.uk", "amazon.ca", "amazon.de", "amazon.es", "amazon.fr", "amazon.it", "amazon.in", "amazon.nl", "amazon.se", "amazon.sa", "amazon.com.mx", "amazon.com.br", "amazon.co.jp", "amazon.pl").
                             fields (list | str): Parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
                             async_request (bool): Parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
                             ui (bool): Parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
@@ -619,6 +624,7 @@ class ApiClient(object):
             'sort': sort,
             'filterByReviewer': filter_by_reviewer,
             'filterByStar': filter_by_star,
+            'domain': domain,
             'async': wait_async,
             'fields': parse_fields(fields),
             'ui': ui,
