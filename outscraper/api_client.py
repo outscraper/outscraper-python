@@ -238,7 +238,7 @@ class ApiClient(object):
     def google_maps_search(self, query: Union[list, str], limit: int = 20, drop_duplicates: bool = False,
         language: str = 'en', region: str = None, skip: int = 0, coordinates: str = None,
         enrichment: list = None, fields: Union[list, str] = None,
-        async_request: bool = False, ui: bool = None, webhook: bool = None
+        async_request: bool = False, ui: bool = None, webhook: str = None
     ) -> Union[list, dict]:
         '''
             Get Google Maps Data V3 (speed optimized endpoint for real time data)
@@ -380,7 +380,7 @@ class ApiClient(object):
     def google_maps_reviews(self, query: Union[list, str], reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
         start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False, language: str = 'en',
         region: str = None, reviews_query: str = None, last_pagination_id: str = None, fields: Union[list, str] = None, async_request: bool = False,
-        ui: bool = None, webhook: bool = None
+        ui: bool = None, webhook: str = None
     ) -> Union[list, dict]:
         '''
             Get Google Maps Reviews V3 (speed optimized endpoint for real time data)
@@ -556,7 +556,7 @@ class ApiClient(object):
         raise Exception(f'Response status code: {response.status_code}')
 
     def amazon_products(self, query: Union[list, str], limit: int = 24, domain: str = 'amazon.com', postal_code: str = '11201', fields: Union[list, str] = None, async_request: bool = False,
-        ui: bool = None, webhook: bool = None
+        ui: bool = None, webhook: str = None
     ) -> Union[list, dict]:
         '''
             Amazon Products V2 (speed optimized)
@@ -594,7 +594,7 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
     def amazon_reviews(self, query: Union[list, str], limit: int = 10, sort: str = 'helpful', filter_by_reviewer: str = 'all_reviews',
-        filter_by_star: str = 'all_stars', domain: str = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+        filter_by_star: str = 'all_stars', domain: str = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
     ) -> Union[list, dict]:
         '''
             Returns reviews from Amazon products.
@@ -634,7 +634,7 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
     def yelp_search(self, query: Union[list, str], limit: int = 100,
-        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
     ) -> Union[list, dict]:
         '''
             Yelp
@@ -668,7 +668,7 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
     def yelp_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'relevance_desc', cutoff: int = None,
-        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
     ) -> Union[list, dict]:
         '''
             Yelp Reviews
@@ -706,7 +706,7 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
     def tripadvisor_reviews(self, query: Union[list, str], limit: int = 100, cutoff: int = None,
-        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
     ) -> Union[list, dict]:
         '''
             Tripadvisor Reviews
@@ -741,7 +741,7 @@ class ApiClient(object):
         return self._handle_response(response, wait_async, async_request)
 
     def apple_store_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'mosthelpful', cutoff: int = None,
-        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: bool = None
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
     ) -> list:
         '''
             Returns reviews from AppStore apps.
