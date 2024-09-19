@@ -776,3 +776,41 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
+
+    def youtube_reviews(
+        self, query: Union[list, str], per_query: int = 100, language: str = 'en', region: str = 'US',
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
+    ) -> list:
+        '''
+            Returns comments from YouTube videos.
+    
+                    Parameters:
+                            query (list | str): video links or video IDs (e.g., https://www.youtube.com/watch?v=ph5pHgklaZ0, ph5pHgklaZ0). It supports batching by sending arrays with up to 250 queries (e.g., query=text1&query=text2&query=text3). It allows multiple queries to be sent in one request and to save on network latency time.
+                            per_query (int): parameter specifies the limit of items to return from one query.
+                            language (str): parameter specifies the language to use for website. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
+                            region (str): parameter specifies the country to use for website. It's recommended to use it for a better search experience. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MQ", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to open an HTTP connection and keep it open until you got your results, or `True` to just submit your requests to Outscraper and retrieve them later (usually within 1-3 minutes) with the Request Results endpoint. Each response is available for 2 hours after a request has been completed. A good practice is to send async requests and start checking the results after the estimated execution time. Check out this Python implementation as an example. As most of the requests take some time to be executed the async=true option is preferred to avoid HTTP requests timeouts.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+    
+                    Returns:
+                            list: json result
+    
+            See: https://app.outscraper.com/api-docs#tag/YouTube/paths/~1youtube-comments/get
+        '''
+    
+        queries = as_list(query)
+        wait_async = async_request or per_query > 499 or len(queries) > 10
+    
+        response = requests.get(f'{self._api_url}/youtube-comments', params={
+            'query': queries,
+            'perQuery': per_query,
+            'language': language,
+            'region': region,
+            'async': wait_async,
+            'fields': parse_fields(fields),
+            'ui': ui,
+            'webhook': webhook,
+        }, headers=self._api_headers)
+    
+        return self._handle_response(response, wait_async, async_request)
