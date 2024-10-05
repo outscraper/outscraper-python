@@ -813,3 +813,80 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
+    
+    def g2_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'g2_default', cutoff: int = None,
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
+    ) -> list:
+        '''
+            Returns reviews from a list of products.
+
+                    Parameters:
+                            query (list | str): Links to G2 products (e.g., https://www.g2.com/products/outscraper). Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
+                            limit (int): parameter specifies the limit of reviews to get from one query.
+                            sort (str): parameter specifies one of the sorting types. Available values: "g2_default", "most_recent", "most_helpful", "highest_rated", "lowest_rated".
+                            cutoff (int): parameter specifies the oldest timestamp value for items. Using the cutoff parameter overwrites sort parameter to most recent.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/YouTube/paths/~1g2~1reviews/get
+        '''
+
+        queries = as_list(query)
+        wait_async = async_request or limit > 499 or len(queries) > 10
+
+        response = requests.get(f'{self._api_url}/g2/reviews', params={
+            'query': queries,
+            'limit': limit,
+            'sort': sort,
+            'cutoff': cutoff,
+            'async': wait_async,
+            'fields': parse_fields(fields),
+            'ui': ui,
+            'webhook': webhook,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, wait_async, async_request)
+    
+    def trustpilot_reviews(self, query: Union[list, str], limit: int = 100, languages: str = 'default', sort: str = '', 
+        cutoff: int = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, 
+        webhook: str = None
+    ) -> list:
+        '''
+            Returns reviews from Trustpilot businesses. In case no reviews were found by your search criteria, your search request will consume the usage of one review.
+
+                    Parameters:
+                            query (list | str): Links to Trustpilot pages or domain names (e.g., outscraper.com, https://www.trustpilot.com/review/outscraper.com).
+                            limit (int): parameter specifies the limit of reviews to get from one query.
+                            languages (str): parameter specifies one of the language filters. Available values: "default", "all", "en", "es", "de".
+                            sort (str): parameter specifies one of the sorting types. Available values: "recency".
+                            cutoff (int): parameter specifies the oldest timestamp value for items. Using the cutoff parameter overwrites sort parameter. Therefore, the latest records will be at the beginning (newest first).
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Trustpilot/paths/~1trustpilot~1reviews/get
+        '''
+
+        queries = as_list(query)
+        wait_async = async_request or limit > 499 or len(queries) > 10
+
+        response = requests.get(f'{self._api_url}/trustpilot/reviews', params={
+            'query': queries,
+            'limit': limit,
+            'languages': languages,
+            'sort': sort,
+            'cutoff': cutoff,
+            'async': wait_async,
+            'fields': parse_fields(fields),
+            'ui': ui,
+            'webhook': webhook,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, wait_async, async_request)
