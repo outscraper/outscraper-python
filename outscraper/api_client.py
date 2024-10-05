@@ -813,7 +813,7 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
-    
+
     def g2_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'g2_default', cutoff: int = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
     ) -> list:
@@ -850,10 +850,9 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
-    
-    def trustpilot_reviews(self, query: Union[list, str], limit: int = 100, languages: str = 'default', sort: str = '', 
-        cutoff: int = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, 
-        webhook: str = None
+
+    def trustpilot_reviews(self, query: Union[list, str], limit: int = 100, languages: str = 'default', sort: str = '',
+        cutoff: int = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
     ) -> list:
         '''
             Returns reviews from Trustpilot businesses. In case no reviews were found by your search criteria, your search request will consume the usage of one review.
