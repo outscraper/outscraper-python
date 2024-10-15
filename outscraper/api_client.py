@@ -266,7 +266,8 @@ class ApiClient(object):
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1search-v3/get
         '''
         queries = as_list(query)
-        wait_async = async_request or (len(queries) > 10 and limit > 1)
+        queries_len = len(queries)
+        wait_async = async_request or (queries_len > 10 and limit > 1) or queries_len > 50
 
         response = requests.get(f'{self._api_url}/maps/search-v3', params={
             'query': queries,
