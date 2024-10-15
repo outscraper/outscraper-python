@@ -890,3 +890,41 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
+    
+    def glassdoor_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'DATE', 
+        cutoff: int = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, 
+        webhook: str = None
+    ) -> list:
+        '''
+            Returns reviews from Glassdoor companies.
+
+                    Parameters:
+                            query (list | str): Direct links to any Glassdoor company (e.g., 'https://www.glassdoor.com/Reviews/Amazon-Reviews-E6036.htm). Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
+                            limit (int): parameter specifies the limit of reviews to get from one query.
+                            sort (str): parameter specifies one of the sorting types. Available values: "DATE", "RELEVANCE".
+                            cutoff (int): parameter specifies the oldest timestamp value for items. Using the cutoff parameter overwrites sort parameter. Therefore, the latest records will be at the beginning (newest first).
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Others/paths/~1glassdoor~1reviews/get
+        '''
+
+        queries = as_list(query)
+        wait_async = async_request or limit > 499 or len(queries) > 10
+
+        response = requests.get(f'{self._api_url}/glassdoor/reviews', params={
+            'query': queries,
+            'limit': limit,
+            'sort': sort,
+            'cutoff': cutoff,
+            'async': wait_async,
+            'fields': parse_fields(fields),
+            'ui': ui,
+            'webhook': webhook,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, wait_async, async_request)
