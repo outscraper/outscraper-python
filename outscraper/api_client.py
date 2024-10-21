@@ -961,9 +961,9 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
-    
+
     def capterra_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'MOST_HELPFUL', cutoff: int = None,
-        language: str = 'en', region: str = None, fields: Union[list, str] = None, async_request: bool = False, 
+        language: str = 'en', region: str = None, fields: Union[list, str] = None, async_request: bool = False,
         ui: bool = None, webhook: str = None
     ) -> list:
         '''
