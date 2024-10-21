@@ -990,7 +990,7 @@ class ApiClient(object):
         queries = as_list(query)
         wait_async = async_request or limit > 499 or len(queries) > 10
 
-        response = requests.get(f'{self._api_url}/glassdoor/reviews', params={
+        response = requests.get(f'{self._api_url}/capterra-reviews', params={
             'query': queries,
             'limit': limit,
             'sort': sort,
