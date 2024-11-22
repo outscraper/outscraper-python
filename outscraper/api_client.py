@@ -1004,3 +1004,63 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
+
+    def geocoding(self, query: Union[list, str], ui: bool = None, fields: Union[list, str] = None, async_request: bool = False, webhook: str = None) -> list:
+        '''
+            Translates human-readable addresses into locations on the map (latitude, longitude).
+
+                    Parameters:
+                            query (list | str): addresses specifying the location for which you want to get the coordinates (e.g., 321 California Ave, Palo Alto, CA 94306, Central Park, NY). Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Other-Services/paths/~1geocoding/get
+        '''
+
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 50
+
+        response = requests.get(f'{self._api_url}/geocoding', params={
+            'query': queries,
+            'async': wait_async,
+            'fields': parse_fields(fields),
+            'ui': ui,
+            'webhook': webhook,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, wait_async, async_request)
+
+    def reverse_geocoding(self, query: Union[list, str], ui: bool = None, fields: Union[list, str] = None, async_request: bool = False, webhook: str = None) -> list:
+        '''
+            Translate locations on the map into human-readable addresses.
+
+                    Parameters:
+                            query (list | str): the latitude and longitude coordinates specifying the location for which you want the closest, human-readable address (e.g., 40.7624284 -73.973794, 37.427074,-122.1439166). Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                            webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
+
+                    Returns:
+                            list: json result
+
+            See: https://app.outscraper.com/api-docs#tag/Other-Services/paths/~1reverse-geocoding/get
+        '''
+
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 50
+
+        response = requests.get(f'{self._api_url}/reverse-geocoding', params={
+            'query': queries,
+            'async': wait_async,
+            'fields': parse_fields(fields),
+            'ui': ui,
+            'webhook': webhook,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, wait_async, async_request)

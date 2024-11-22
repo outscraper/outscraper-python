@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='outscraper',
-    version='5.4.1',
+    version='5.5.0',
     description='Python bindings for the Outscraper API',
     long_description=readme(),
     classifiers = ['Programming Language :: Python',
