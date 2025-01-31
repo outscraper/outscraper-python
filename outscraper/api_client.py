@@ -1064,3 +1064,87 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
+
+    def whitepages_phones(
+    self,
+    query: Union[list, str],
+    fields: Union[list, str] = None,
+    async_request: bool = False,
+    ui: bool = None,
+    webhook: str = None
+    ) -> Union[list, dict]:
+        '''
+            Phone Identity Finder (Whitepages)
+
+            Returns insights about phone number owners (name, address, etc.) from Whitepages by phone number(s).
+
+                    Parameters:
+                            query (list | str): phone number(s), e.g. "+1 281 236 8208".
+                            fields (list | str): parameter defines which fields you want to include with each item in the response. By default, it returns all fields.
+                            async_request (bool): defines the way you want to submit your task to Outscraper. It can be set to `False` to send a task and wait for the results, or `True` to submit a task and retrieve results later using a request ID with `get_request_archive`.
+                            ui (bool): defines whether a task will be executed as a UI task. Using this parameter overwrites the async_request parameter to `True`.
+                            webhook (str): defines the callback URL to which Outscraper will send a POST request with JSON once the task is finished.
+
+                    Returns:
+                            list|dict: JSON result
+
+            See: https://app.outscraper.com/api-docs#tag/WhitePages/paths/~1whitepages-phones/get
+        '''
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 1
+
+        response = requests.get(
+            f'{self._api_url}/whitepages-phones',
+            params={
+                'query': queries,
+                'async': wait_async,
+                'fields': parse_fields(fields),
+                'ui': ui,
+                'webhook': webhook,
+            },
+            headers=self._api_headers
+        )
+
+        return self._handle_response(response, wait_async, async_request)
+
+    def whitepages_addresses(
+    self,
+    query: Union[list, str],
+    fields: Union[list, str] = None,
+    async_request: bool = False,
+    ui: bool = None,
+    webhook: str = None
+    ) -> Union[list, dict]:
+        '''
+            Whitepages Addresses Scraper
+
+            Returns insights about addresses and their residents.
+
+                    Parameters:
+                            query (list | str): address(es), e.g. "321 California Ave, Palo Alto, CA 94306".
+                            fields (list | str): parameter defines which fields you want to include with each item in the response. By default, it returns all fields.
+                            async_request (bool): defines the way you want to submit your task to Outscraper. It can be set to `False` to send a task and wait for the results, or `True` to submit a task and retrieve results later using a request ID with `get_request_archive`.
+                            ui (bool): defines whether a task will be executed as a UI task. Using this parameter overwrites the async_request parameter to `True`.
+                            webhook (str): defines the callback URL to which Outscraper will send a POST request with JSON once the task is finished.
+
+                    Returns:
+                            list|dict: JSON result
+
+            See: https://app.outscraper.com/api-docs#tag/WhitePages/paths/~1whitepages-addresses/get
+        '''
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 1
+
+        response = requests.get(
+            f'{self._api_url}/whitepages-addresses',
+            params={
+                'query': queries,
+                'async': wait_async,
+                'fields': parse_fields(fields),
+                'ui': ui,
+                'webhook': webhook,
+            },
+            headers=self._api_headers
+        )
+
+        return self._handle_response(response, wait_async, async_request)
