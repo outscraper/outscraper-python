@@ -6,7 +6,7 @@ from .utils import as_list, parse_fields
 
 
 class ApiClient(object):
-    """Outscraper ApiClient - Python SDK that allows using Outscraper's services and Outscraper's API.
+    '''Outscraper ApiClient - Python SDK that allows using Outscraper's services and Outscraper's API.
     ```python
     from outscraper import ApiClient
     cliet = ApiClient(api_key='SECRET_API_KEY')
@@ -14,7 +14,7 @@ class ApiClient(object):
     search_results = cliet.google_search('bitcoin')
     ```
     https://github.com/outscraper/outscraper-python
-    """
+    '''
 
     _api_url = 'https://api.app.outscraper.com'
     _api_headers = {}
@@ -145,7 +145,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1google-search-v3/get
         '''
@@ -182,7 +182,7 @@ class ApiClient(object):
                             fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1google-search-news/get
         '''
@@ -224,7 +224,7 @@ class ApiClient(object):
                             fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1search/get
         '''
@@ -271,7 +271,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1search-v3/get
         '''
@@ -319,7 +319,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1directions/get
         '''
@@ -368,7 +368,7 @@ class ApiClient(object):
                             fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1reviews-v3/get
         '''
@@ -426,7 +426,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1reviews-v3/get
         '''
@@ -473,7 +473,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1photos-v3/get
         '''
@@ -516,7 +516,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Google-Play/paths/~1google-play~1reviews/get
         '''
@@ -547,7 +547,7 @@ class ApiClient(object):
                             fields (list | str): Parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Email-Related/paths/~1emails-and-contacts/get
         '''
@@ -570,7 +570,7 @@ class ApiClient(object):
                             fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Phone-Related/paths/~1phones-enricher/get
         '''
@@ -603,7 +603,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Amazon/paths/~1amazon~1products-v2/get
         '''
@@ -642,7 +642,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Amazon/paths/~1amazon~1reviews/get
         '''
@@ -681,7 +681,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Others/paths/~1yelp-search/get
         '''
@@ -718,7 +718,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Reviews-and-Comments/paths/~1yelp~1reviews/get
         '''
@@ -755,7 +755,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Reviews-and-Comments/paths/~1trustpilot~1reviews/get
         '''
@@ -791,7 +791,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Reviews-and-Comments/paths/~1appstore~1reviews/get
         '''
@@ -829,7 +829,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/YouTube/paths/~1youtube-comments/get
         '''
@@ -867,7 +867,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/YouTube/paths/~1g2~1reviews/get
         '''
@@ -906,7 +906,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Trustpilot/paths/~1trustpilot~1reviews/get
         '''
@@ -945,7 +945,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Others/paths/~1glassdoor~1reviews/get
         '''
@@ -986,7 +986,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Capterra/paths/~1capterra-reviews/get
         '''
@@ -1021,7 +1021,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Other-Services/paths/~1geocoding/get
         '''
@@ -1051,7 +1051,7 @@ class ApiClient(object):
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
                     Returns:
-                            list: json result
+                            list|dict: JSON result
 
             See: https://app.outscraper.com/api-docs#tag/Other-Services/paths/~1reverse-geocoding/get
         '''
@@ -1130,3 +1130,128 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
+
+    def company_insights(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = False, enrichment: list = None)  -> Union[list, dict]:
+        '''
+            Company Insights Data
+
+            Finds company details such as revenue, size, founding year, public status, etc.
+
+                    Parameters:
+                            query (list | str): Domains or websites (e.g., dominopark.com, https://www.esbnyc.com/).
+                            fields (list | str): The parameter defines an enrichment or enrichments (e.g., enrichment=enrichment1&enrichment=enrichment2&enrichment=enrichment3) you want to apply to the results. Available values: domains_service, emails_validator_service, disposable_email_checker, company_insights_service, whatsapp_checker, phones_enricher_service, trustpilot_service, companies_data.
+                            async_request (bool): defines the way you want to submit your task to Outscraper. It can be set to `False` to send a task and wait for the results, or `True` to submit a task and retrieve results later using a request ID with `get_request_archive`.
+                            enrichment (list | str): The parameter defines an enrichment or enrichments (e.g., enrichment=enrichment1&enrichment=enrichment2&enrichment=enrichment3) you want to apply to the results. Available values: domains_service, emails_validator_service, disposable_email_checker, company_insights_service, whatsapp_checker, phones_enricher_service, trustpilot_service, companies_data.
+
+                    Returns:
+                            list|dict: JSON result
+
+            See: https://app.outscraper.com/api-docs#tag/Other-Services/paths/~1company-insights/get
+        '''
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 1
+
+        response = requests.get(f'{self._api_url}/company-insights', params={
+            'query': queries,
+            'fields': parse_fields(fields),
+            'enrichment': as_list(enrichment) if enrichment else '',
+            'async': wait_async,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, wait_async, async_request)
+
+    def validate_emails(self, query: Union[list, str], async_request: bool = False) -> Union[list, dict]:
+        '''
+            Email Address Verifier
+
+            Allows to validate email addresses. Checks if emails are deliverable.
+
+                    Parameters:
+                            query (list | str): Email address (e.g., support@outscraper.com).
+                            async_request (bool): defines the way you want to submit your task to Outscraper. It can be set to `False` to send a task and wait for the results, or `True` to submit a task and retrieve results later using a request ID with `get_request_archive`.
+
+                    Returns:
+                            list|dict: JSON result
+
+            See: https://app.outscraper.com/api-docs#tag/Email-Related/paths/~1email-validator/get
+        '''
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 1
+
+        response = requests.get(f'{self._api_url}/email-validator', params={
+            'query': queries,
+            'async': wait_async,
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, async_request, async_request)
+
+    def trustpilot_search(self, query: Union[list, str], limit: int = 100, skip: int = 0, enrichment: list = None, fields: Union[list, str] = None,  async_request: bool = False, ui: bool = None, webhook: str = None) -> Union[list, dict]:
+        '''
+            Trustpilot Search
+
+            Returns search resutls from Trustpilot.
+
+                    Parameters:
+                            query (list | str): Company or category to search on Trustpilot (e.g., real estate).
+                            limit (int): The parameter specifies the limit of items to get from one query.
+                            skip (int): The parameter specifies the number of items to skip. It's commonly used in pagination.
+                            enrichment (list | str): The parameter defines an enrichment or enrichments (e.g., enrichment=enrichment1&enrichment=enrichment2&enrichment=enrichment3) you want to apply to the results. Available values: domains_service, emails_validator_service, disposable_email_checker, company_insights_service, whatsapp_checker, phones_enricher_service, trustpilot_service, companies_data.
+                            fields (list | str): The parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields. Use &fields=query,name to return only the specific ones.
+                            async_request (bool): defines the way you want to submit your task to Outscraper. It can be set to `False` to send a task and wait for the results, or `True` to submit a task and retrieve results later using a request ID with `get_request_archive`.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+                            webhook (str): defines the callback URL to which Outscraper will send a POST request with JSON once the task is finished.
+
+                    Returns:
+                            list|dict: JSON result
+
+            See: https://app.outscraper.com/api-docs#tag/Businesses-and-POI/paths/~1trustpilot~1search/get
+        '''
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 1
+
+        response = requests.get(f'{self._api_url}/trustpilot', params={
+            'query': queries,
+            'limit': limit,
+            'skip': skip,
+            'enrichment': as_list(enrichment) if enrichment else '',
+            'fields': parse_fields(fields),
+            'async': wait_async,
+            'ui': ui,
+            'webhook': webhook
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, async_request, async_request)
+
+    def trustpilot(self, query: Union[list, str], enrichment: list = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None) -> Union[list, dict]:
+        '''
+            Trustpilot
+
+            Returns data from Trustpilot businesses.
+
+                    Parameters:
+                            query (str | list): Links to Trustpilot pages or domain names (e.g., outscraper.com, https://www.trustpilot.com/review/outscraper.com).
+                            enrichment (str | list): The parameter defines an enrichment or enrichments (e.g., enrichment=enrichment1&enrichment=enrichment2&enrichment=enrichment3) you want to apply to the results. Available values: domains_service, emails_validator_service, disposable_email_checker, company_insights_service, whatsapp_checker, phones_enricher_service, trustpilot_service, companies_data.
+                            fields (str): The parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields. Use &fields=query,name to return only the specific ones..
+                            async_request (bool): defines the way you want to submit your task to Outscraper. It can be set to `False` to send a task and wait for the results, or `True` to submit a task and retrieve results later using a request ID with `get_request_archive`.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+                            webhook (str): defines the callback URL to which Outscraper will send a POST request with JSON once the task is finished.
+
+                    Returns:
+                            list|dict: JSON result
+
+            See: https://app.outscraper.com/api-docs#tag/Trustpilot/paths/~1trustpilot/get
+        '''
+
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 1
+
+        response = requests.get(f'{self._api_url}/trustpilot', params={
+            'query': queries,
+            'enrichment': as_list(enrichment) if enrichment else '',
+            'fields': parse_fields(fields),
+            'async': wait_async,
+            'ui': ui,
+            'webhook': webhook
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, async_request)
