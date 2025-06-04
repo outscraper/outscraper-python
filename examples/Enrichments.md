@@ -25,6 +25,7 @@ client = ApiClient(api_key='SECRET_API_KEY')
 # Enriching data from Google Maps with Emails & Contacts Scraper and validating emails:
 results = client.google_maps_search('bars ny usa', enrichment=[
     'domains_service', # Emails & Contacts Scraper
-    'emails_validator_service' # Email Validator
+    'emails_validator_service', # Email Validator
+    'company_insights_service'
 ])
 ```
