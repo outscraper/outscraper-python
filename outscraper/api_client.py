@@ -1255,3 +1255,67 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, async_request)
+
+    def similarweb(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None) -> Union[list, dict]:
+        '''
+            Similarweb
+
+            Returns data from Similarweb businesses.
+
+                    Parameters:
+                            query (str | list): Domains or websites (e.g., apple.com, https://www.google.com/). It supports batching by sending arrays with up to 250 queries (e.g., query=text1&query=text2&query=text3). It allows multiple queries to be sent in one request and to save on network latency time.
+                            fields (str): The parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields. Use &fields=query,name to return only the specific ones.
+                            async_request (bool): defines the way you want to submit your task to Outscraper. It can be set to `False` to send a task and wait for the results, or `True` to submit a task and retrieve results later using a request ID with `get_request_archive`.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+                            webhook (str): defines the callback URL to which Outscraper will send a POST request with JSON once the task is finished.
+
+                    Returns:
+                            list|dict: JSON result
+
+            See: https://app.outscraper.cloud/api-docs#tag/Domain-Related/paths/~1similarweb/get
+        '''
+
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 1
+
+        response = requests.get(f'{self._api_url}/similarweb', params={
+            'query': queries,
+            'fields': parse_fields(fields),
+            'async': wait_async,
+            'ui': ui,
+            'webhook': webhook
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, async_request)
+
+    def company_websites_finder(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None) -> Union[list, dict]:
+        '''
+            Company Website Finder
+
+            Returns data from Company Website Finder businesses.
+
+                    Parameters:
+                            query (str | list): Business names (e.g., Apple Inc, Microsoft Corporation, Tesla Motors). It supports batching by sending arrays with up to 250 queries (e.g., query=text1&query=text2&query=text3). It allows multiple queries to be sent in one request and to save on network latency time
+                            fields (str): TThe parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields. Use &fields=query,name to return only the specific ones.
+                            async_request (bool): defines the way you want to submit your task to Outscraper. It can be set to `False` to send a task and wait for the results, or `True` to submit a task and retrieve results later using a request ID with `get_request_archive`.
+                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+                            webhook (str): defines the callback URL to which Outscraper will send a POST request with JSON once the task is finished.
+
+                    Returns:
+                            list|dict: JSON result
+
+            See: https://app.outscraper.cloud/api-docs#tag/Domain-Related/paths/~1company-website-finder/get
+        '''
+
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 1
+
+        response = requests.get(f'{self._api_url}/company-website-finder', params={
+            'query': queries,
+            'fields': parse_fields(fields),
+            'async': wait_async,
+            'ui': ui,
+            'webhook': webhook
+        }, headers=self._api_headers)
+
+        return self._handle_response(response, async_request)
