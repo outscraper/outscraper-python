@@ -1,4 +1,4 @@
-# Email Addresses Finder Scraper With Python
+# Email Addresses Finder With Python
 
 Allows to validate email addresses. Checks if emails are deliverable. [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Email-Related/paths/~1email-validator/get).
 
