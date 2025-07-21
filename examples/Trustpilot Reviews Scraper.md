@@ -1,4 +1,4 @@
-# Trustpilot Reviews With Python
+# Trustpilot Reviews Scraper With Python
 
 Returns reviews from Trustpilot businesses. In case no reviews were found by your search criteria, your search request will consume the usage of one review.[Outscraper API](https://app.outscraper.cloud/api-docs#tag/Reviews-and-Comments/paths/~1trustpilot~1reviews/get).
 

@@ -1,6 +1,6 @@
-# Youtube Comments With Python
+# SimilarWeb Scraper With Python
 
-Returns comments from YouTube videos.[Outscraper API](https://app.outscraper.cloud/api-docs#tag/Reviews-and-Comments/paths/~1youtube-comments/get).
+Returns website analytics data including traffic, rankings, audience insights, and competitive intelligence from SimilarWeb [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Domain-Related/paths/~1similarweb/get).
 
 ## Installation
 
@@ -22,6 +22,5 @@ client = ApiClient(api_key='SECRET_API_KEY')
 ## Usage
 
 ```python
-# Get information about the comments from YouTube videos:
-results = client.youtube_comments(['https://www.youtube.com/watch?v=ph5pHgklaZ0'])
-```
+# Get data from Similarweb businesses:
+results = client.similarweb(['apple.com'])

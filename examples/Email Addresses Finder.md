@@ -1,6 +1,6 @@
-# Yellowpages With Python
+# Email Addresses Finder Scraper With Python
 
-Returns search results from Yellow Pages. [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Businesses-and-POI/paths/~1yellowpages-search/get).
+Allows to validate email addresses. Checks if emails are deliverable. [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Email-Related/paths/~1email-validator/get).
 
 ## Installation
 
@@ -22,6 +22,6 @@ client = ApiClient(api_key='SECRET_API_KEY')
 ## Usage
 
 ```python
-# Search results from Yellow Pages:
-results = client.yellowpages_search(['restaurants'])
+# Validate email addresses:
+results = client.validate_emails(['support@outscraper.com'])
 ```

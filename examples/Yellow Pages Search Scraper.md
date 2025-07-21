@@ -1,6 +1,6 @@
-# Similarweb With Python
+# Yellow Pages Search Scraper With Python
 
-Returns website analytics data including traffic, rankings, audience insights, and competitive intelligence from SimilarWeb [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Domain-Related/paths/~1similarweb/get).
+Returns search results from Yellow Pages. [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Businesses-and-POI/paths/~1yellowpages-search/get).
 
 ## Installation
 
@@ -22,5 +22,6 @@ client = ApiClient(api_key='SECRET_API_KEY')
 ## Usage
 
 ```python
-# Get data from Similarweb businesses:
-results = client.similarweb(['apple.com'])
+# Search results from Yellow Pages:
+results = client.yellowpages_search(['restaurants'])
+```

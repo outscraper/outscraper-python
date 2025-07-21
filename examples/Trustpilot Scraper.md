@@ -1,6 +1,6 @@
-# Email Address Verifier Scraper With Python
+# Trustpilot Scraper With Python
 
-Allows to validate email addresses. Checks if emails are deliverable. [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Email-Related/paths/~1email-validator/get).
+Returns data from Trustpilot businesses. [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Businesses-and-POI/paths/~1trustpilot/get).
 
 ## Installation
 
@@ -22,6 +22,6 @@ client = ApiClient(api_key='SECRET_API_KEY')
 ## Usage
 
 ```python
-# Validate email addresses:
-results = client.validate_emails(['support@outscraper.com'])
+# Search data from Trustpilot businesses:
+results = client.trustpilot(['outscraper.com'])
 ```

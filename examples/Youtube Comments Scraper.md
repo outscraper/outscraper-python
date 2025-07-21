@@ -1,6 +1,6 @@
-# Trustpilot Search With Python
+# Youtube Comments Scraper With Python
 
-Returns search results from Trustpilot. [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Trustpilot/paths/~1trustpilot~1search/get).
+Returns comments from YouTube videos.[Outscraper API](https://app.outscraper.cloud/api-docs#tag/Reviews-and-Comments/paths/~1youtube-comments/get).
 
 ## Installation
 
@@ -22,6 +22,6 @@ client = ApiClient(api_key='SECRET_API_KEY')
 ## Usage
 
 ```python
-# Get information about the search results from Trustpilot:
-results = client.trustpilot_search(['real estate'])
+# Get information about the comments from YouTube videos:
+results = client.youtube_comments(['https://www.youtube.com/watch?v=ph5pHgklaZ0'])
 ```

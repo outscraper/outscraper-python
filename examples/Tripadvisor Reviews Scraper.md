@@ -1,4 +1,4 @@
-# Tripadvisor Reviews With Python
+# Tripadvisor Reviews Scraper With Python
 
 Returns reviews from Tripadvisor businesses.
 In case no reviews were found by your search criteria, your search request will consume the usage of one review. [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Reviews-and-Comments/paths/~1tripadvisor-reviews/get).
