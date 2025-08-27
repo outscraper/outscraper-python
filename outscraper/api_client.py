@@ -323,7 +323,14 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1directions/get
         '''
-        queries = as_list(query)
+        def _format_queries(q: Union[list, str]) -> list[str]:
+            if isinstance(q, list):
+                if all(isinstance(i, list) for i in q):
+                    return ["    ".join(pair) for pair in q]
+                return q
+            return [q]
+
+        queries = _format_queries(query)
         wait_async = async_request or len(queries) > 10
 
         response = requests.get(f'{self._api_url}/maps/directions', params={
