@@ -2,7 +2,7 @@ import requests
 from time import sleep
 from typing import Union, Tuple
 
-from .utils import as_list, parse_fields
+from .utils import as_list, parse_fields, format_direction_queries
 
 
 class ApiClient(object):
@@ -323,14 +323,8 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1directions/get
         '''
-        def _format_queries(q: Union[list, str]) -> list[str]:
-            if isinstance(q, list):
-                if all(isinstance(i, list) for i in q):
-                    return ["    ".join(pair) for pair in q]
-                return q
-            return [q]
 
-        queries = _format_queries(query)
+        queries = format_direction_queries(query)
         wait_async = async_request or len(queries) > 10
 
         response = requests.get(f'{self._api_url}/maps/directions', params={
