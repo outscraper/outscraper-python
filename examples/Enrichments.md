@@ -32,18 +32,18 @@ results = client.google_maps_search('bars ny usa', enrichment=[
 
 ## Available values
 
-`domains_service` — **Emails & Contacts Scraper**: finds emails, social links, phones, and other contacts from websites,
+`contacts_n_leads` — **Contacts & Leads Enrichment**: finds emails, social links, phones, and other contacts from websites;
 
-`emails_validator_service` — **Email Address Verifier**: validates emails, checks deliverability, filters out blacklists, spam traps, and complainers, while significantly reducing your bounce rate,
+`emails_validator_service` — **Email Address Verifier**: validates emails, checks deliverability, filters out blacklists, spam traps, and complainers, while significantly reducing your bounce rate;
 
-`disposable_email_checker` — **Disposable Emails Checker**: checks origins of email addresses (disposable, free, or corporate),
+`disposable_email_checker` — **Disposable Emails Checker**: checks origins of email addresses (disposable, free, or corporate);
 
-`company_insights_service` — **Company Insights**: finds company details such as revenue, size, founding year, public status, etc,
+`company_insights_service` — **Company Insights**: finds company details such as revenue, size, founding year, public status, etc;
 
-`phones_enricher_service` — **Phone Numbers Enricher**: returns phones carrier data (name/type), validates phones, ensures messages deliverability,
+`phones_enricher_service` — **Phone Numbers Enricher**: returns phones carrier data (name/type), validates phones, ensures messages deliverability;
 
-`trustpilot_service` — **Trustpilot Scraper**: returns data from a list of businesses,
+`trustpilot_service` — **Trustpilot Scraper**: returns data from a list of businesses;
 
-`whitepages_phones` - **Phone Identity Finder**: returns insights about phone number owners (name, address, etc.),
+`whitepages_phones` - **Phone Identity Finder**: returns insights about phone number owners (name, address, etc.);
 
 `ai_chain_info` - **Chain Info**: identifies if a business is part of a chain, adding a true/false indication to your data for smarter targeting.
