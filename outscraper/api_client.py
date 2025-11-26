@@ -1,6 +1,6 @@
 import requests
 from time import sleep
-from typing import Union, Tuple
+from typing import Union, Tuple, Optional
 
 from .utils import as_list, parse_fields, format_direction_queries
 
@@ -9,9 +9,9 @@ class ApiClient(object):
     '''Outscraper ApiClient - Python SDK that allows using Outscraper's services and Outscraper's API.
     ```python
     from outscraper import ApiClient
-    cliet = ApiClient(api_key='SECRET_API_KEY')
-    maps_results = cliet.google_maps_search('restaurants brooklyn usa')
-    search_results = cliet.google_search('bitcoin')
+    client = ApiClient(api_key='SECRET_API_KEY')
+    maps_results = client.google_maps_search('restaurants brooklyn usa')
+    search_results = client.google_search('bitcoin')
     ```
     https://github.com/outscraper/outscraper-python
     '''
@@ -538,6 +538,64 @@ class ApiClient(object):
         }, headers=self._api_headers)
 
         return self._handle_response(response, wait_async, async_request)
+
+    def contacts_and_leads(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = True,
+       preferred_contacts: Optional[Union[list, str]] = None, contacts_per_company: int = 3, emails_per_contact: int = 1,
+       general_emails: bool = False, ui: bool = False, webhook: Optional[str] = None) -> list:
+        '''
+            Contacts and Leads Scraper
+
+            Returns emails, social links, phones, and other contacts from websites based on domain names, URLs.
+            It supports batching by sending arrays with up to 250 queries.
+            It allows multiple queries to be sent in one request and to save on network latency time.
+
+                Parameters:
+                    query (list | str): Company domains, URLs (e.g., 'outscraper.com', ['tesla.com', 'microsoft.com']).
+                    fields (list | str): Defines which fields to include in each returned item.
+                        By default, all fields are returned.
+                    async_request (bool): The parameter defines the way you want to submit your task. It can be set to `False`
+                        to open an HTTP connection and keep it open until you got your results, or `True` (default)
+                        to just submit your requests to Outscraper and retrieve them later with the Request Results endpoint.
+                        Default: True.
+                    preferred_contacts (list | str): Contact roles you want to prioritize
+                        (e.g., 'influencers', 'technical', ['decision makers', 'sales']).
+                        Default: None.
+                    contacts_per_company (int): The parameter specifies the number of Contacts per one company.
+                        Default: 3.
+                    emails_per_contact (int): The parameter specifies the number of email addresses per one contact.
+                        Default: 1.
+                    general_emails (bool): The parameter specifies whether to include only general email (info@, support@, etc.)
+                        or only not general email (paul@, john@, etc.).
+                        Default: False.
+                    ui (bool): Execute as a UI task. Overrides async_request to True.
+                        Default: False.
+                    webhook (str): URL for callback notifications when a task completes.
+                        Default: None.
+
+                Returns:
+                    list|dict: JSON result
+
+            See: https://app.outscraper.cloud/api-docs#tag/Email-Related/paths/~1contacts-and-leads/get
+        '''
+        queries = as_list(query)
+        wait_async = async_request or len(queries) > 1
+
+        response = requests.get(f'{self._api_url}/contacts-and-leads', params={
+            'query': queries,
+            'fields': parse_fields(fields),
+            'async': wait_async,
+            'preferred_contacts': as_list(preferred_contacts) if preferred_contacts else None,
+            'contacts_per_company': contacts_per_company,
+            'emails_per_contact': emails_per_contact,
+            'general_emails': general_emails,
+            'ui': ui,
+            'webhook': webhook
+        }, headers=self._api_headers)
+
+        if 199 < response.status_code < 300:
+            return self._wait_request_archive(response.json()['id']).get('data', [])
+
+        raise Exception(f'Response status code: {response.status_code}')
 
     def emails_and_contacts(self, query: Union[list, str], fields: Union[list, str] = None) -> list:
         '''
