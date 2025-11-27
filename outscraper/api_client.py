@@ -99,7 +99,7 @@ class ApiClient(object):
         if 199 < response.status_code < 300:
             if response.json().get('error'):
                 error_message = response.json().get('errorMessage')
-                raise Exception(f'errorMessage: {error_message}')
+                raise Exception(f'error: {error_message}')
 
             if wait_async:
                 response_json = response.json()
