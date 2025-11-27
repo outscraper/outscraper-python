@@ -80,11 +80,11 @@ class ApiClient(object):
         '''
             Fetch request data from archive
 
-                    Parameters:
-                            request_id (int): unique id for the request provided by ['id']
+                Parameters:
+                    request_id (int): unique id for the request provided by ['id']
 
-                    Returns:
-                            dict: result from the archive
+                Returns:
+                    dict: result from the archive
 
             See: https://app.outscraper.com/api-docs#tag/Requests/paths/~1requests~1{requestId}/get
         '''
@@ -97,6 +97,10 @@ class ApiClient(object):
 
     def _handle_response(self, response: requests.models.Response, wait_async: bool = False, async_request: bool = False) -> Union[list, dict]:
         if 199 < response.status_code < 300:
+            if response.json().get('error'):
+                error_message = response.json().get('errorMessage')
+                raise Exception(f'errorMessage: {error_message}')
+
             if wait_async:
                 response_json = response.json()
 
@@ -244,42 +248,43 @@ class ApiClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
-    def google_maps_search(self, query: Union[list, str], limit: int = 20, drop_duplicates: bool = False,
-        language: str = 'en', region: str = None, skip: int = 0, coordinates: str = None,
-        enrichment: list = None, fields: Union[list, str] = None,
-        async_request: bool = False, ui: bool = None, webhook: str = None
-    ) -> Union[list, dict]:
+    def google_maps_search(self, query: Union[list, str], limit: int = 20, drop_duplicates: bool = False, language: str = 'en',
+       region: Optional[str] = None, skip: int = 0, coordinates: str = '', enrichment: Optional[list] = None, fields: Union[list, str] = None,
+        async_request: bool = False, ui: bool = False, webhook: str = '') -> Union[list, dict]:
         '''
-            Get Google Maps Data V3 (speed optimized endpoint for real time data)
+            Get Google Maps Data (speed-optimized endpoint for real-time data)
 
             Returns places from Google Maps based on a given search query (or many queries).
-            The results from searches are the same as you would see by visiting a regular Google Maps site. However, in most cases, it's recommended to use locations inside queries (e.g., bars, NY, USA) as the IP addresses of Outscraper's servers might be located in different countries.
-            This endpoint is optimized for fast responses and can be used as real time API. Set the limit parameter to 20 to achieve the maximum response speed.
+            The results from searches are the same as you would see by visiting a regular Google Maps site. However, in most cases, it's recommended
+            to use locations inside queries (e.g., bars, NY, USA) as the IP addresses of Outscraper's servers might be located in different countries.
+            This endpoint is optimized for fast responses and can be used as a real-time API.
+            Set the limit parameter to 20 to achieve the maximum response speed.
 
-                    Parameters:
-                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id. The example of valid queries: Real estate agency, Rome, Italy, The NoMad Restaurant, NY, USA, restaurants, Brooklyn 11203, 0x886916e8bc273979:0x5141fcb11460b226, etc. Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
-                            limit (int): parameter specifies the limit of places to take from one query search. The same as on Google Maps site, there are no more than 400 organizations per one query search. Use more precise categories (e.g., Asian restaurant, Italian restaurant) and/or locations (e.g., restaurants, Brooklyn 11211, restaurants, Brooklyn 11215) to overcome this limitation.
-                            drop_duplicates (bool): parameter specifies whether the bot will drop the same organizations from different queries. Using the parameter combines results from each query inside one big array.
-                            language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
-                            region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
-                            skip (int): skip first N places, where N should be multiple to 20 (e.g. 0, 20, 40). It's commonly used in pagination.
-                            coordinates (str): parameter defines the coordinates of the location where you want your query to be applied. It has to be constructed in the next sequence: "latitude" + "," + "longitude" (e.g. "41.3954381,2.1628662").
-                            enrichment (list): parameter defines enrichments you want to apply to the results. Available values: "domains_service", "emails_validator_service", "disposable_email_checker", "whatsapp_checker", "imessage_checker", "phones_enricher_service", "trustpilot_service", "companies_data".
-                            fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
-                            async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
-                            ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
-                            webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
+                Parameters:
+                    query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id. The example of valid queries: Real estate agency, Rome, Italy, The NoMad Restaurant, NY, USA, restaurants, Brooklyn 11203, 0x886916e8bc273979:0x5141fcb11460b226, etc. Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
+                    limit (int): parameter specifies the limit of places to take from one query search. The same as on Google Maps site, there are no more than 400 organizations per one query search. Use more precise categories (e.g., Asian restaurant, Italian restaurant) and/or locations (e.g., restaurants, Brooklyn 11211, restaurants, Brooklyn 11215) to overcome this limitation.
+                    drop_duplicates (bool): parameter specifies whether the bot will drop the same organizations from different queries. Using the parameter combines results from each query inside one big array.
+                    language (str): parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
+                    region (str): parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
+                    skip (int): skip first N places, where N should be multiple to 20 (e.g. 0, 20, 40). It's commonly used in pagination.
+                    coordinates (str): parameter defines the coordinates of the location where you want your query to be applied. It has to be constructed in the next sequence: "latitude" + "," + "longitude" (e.g. "41.3954381,2.1628662").
+                    enrichment (list): parameter defines enrichments you want to apply to the results. Available values: "domains_service", "emails_validator_service", "disposable_email_checker", "whatsapp_checker", "imessage_checker", "phones_enricher_service", "trustpilot_service", "companies_data".
+                    fields (list | str): parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+                    async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
+                    ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
+                    webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
 
-                    Returns:
-                            list|dict: JSON result
+                Returns:
+                    list|dict: JSON result
 
-            See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1search-v3/get
+            See: https://app.outscraper.cloud/api-docs#tag/Google/paths/~1google-maps-search/get
         '''
+
         queries = as_list(query)
         queries_len = len(queries)
         wait_async = async_request or (queries_len > 10 and limit > 1) or queries_len > 50
 
-        response = requests.get(f'{self._api_url}/maps/search-v3', params={
+        payload = {
             'query': queries,
             'language': language,
             'region': region,
@@ -292,7 +297,13 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
+
+        response = requests.post(
+            f'{self._api_url}/google-maps-search',
+            json=payload,
+            headers=self._api_headers
+        )
 
         return self._handle_response(response, wait_async, async_request)
 
@@ -541,7 +552,7 @@ class ApiClient(object):
 
     def contacts_and_leads(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = True,
        preferred_contacts: Optional[Union[list, str]] = None, contacts_per_company: int = 3, emails_per_contact: int = 1,
-       general_emails: bool = False, ui: bool = False, webhook: Optional[str] = None) -> list:
+       skip_contacts: int = 0, general_emails: bool = False, ui: bool = False, webhook: Optional[str] = None) -> list:
         '''
             Contacts and Leads Scraper
 
@@ -564,6 +575,8 @@ class ApiClient(object):
                         Default: 3.
                     emails_per_contact (int): The parameter specifies the number of email addresses per one contact.
                         Default: 1.
+                    skip_contacts (int): The parameter specifies the number of contacts to skip. It's commonly used in pagination.
+                        Default: 0.
                     general_emails (bool): The parameter specifies whether to include only general email (info@, support@, etc.)
                         or only not general email (paul@, john@, etc.).
                         Default: False.
@@ -587,6 +600,7 @@ class ApiClient(object):
             'preferred_contacts': as_list(preferred_contacts) if preferred_contacts else None,
             'contacts_per_company': contacts_per_company,
             'emails_per_contact': emails_per_contact,
+            'skip_contacts': skip_contacts,
             'general_emails': general_emails,
             'ui': ui,
             'webhook': webhook
