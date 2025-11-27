@@ -232,6 +232,12 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1search/get
         '''
+
+        raise NotImplementedError(
+            'google_maps_search_v1() is deprecated and has been removed. '
+            'Use google_maps_search() instead.'
+        )
+
         response = requests.get(f'{self._api_url}/maps/search', params={
             'query': as_list(query),
             'coordinates': coordinates,
