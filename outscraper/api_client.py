@@ -277,7 +277,7 @@ class ApiClient(object):
                 Returns:
                     list|dict: JSON result
 
-            See: https://app.outscraper.cloud/api-docs#tag/Google/paths/~1google-maps-search/get
+            See: https://app.outscraper.com/api-docs#tag/Google/paths/~1google-maps-search/get
         '''
 
         queries = as_list(query)
@@ -588,7 +588,7 @@ class ApiClient(object):
                 Returns:
                     list|dict: JSON result
 
-            See: https://app.outscraper.cloud/api-docs#tag/Email-Related/paths/~1contacts-and-leads/get
+            See: https://app.outscraper.com/api-docs#tag/Email-Related/paths/~1contacts-and-leads/get
         '''
         queries = as_list(query)
         wait_async = async_request or len(queries) > 1
@@ -1345,7 +1345,7 @@ class ApiClient(object):
                     Returns:
                             list|dict: JSON result
 
-            See: https://app.outscraper.cloud/api-docs#tag/Domain-Related/paths/~1similarweb/get
+            See: https://app.outscraper.com/api-docs#tag/Domain-Related/paths/~1similarweb/get
         '''
 
         queries = as_list(query)
@@ -1377,7 +1377,7 @@ class ApiClient(object):
                     Returns:
                             list|dict: JSON result
 
-            See: https://app.outscraper.cloud/api-docs#tag/Domain-Related/paths/~1company-website-finder/get
+            See: https://app.outscraper.com/api-docs#tag/Domain-Related/paths/~1company-website-finder/get
         '''
 
         queries = as_list(query)
