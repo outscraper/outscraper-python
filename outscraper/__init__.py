@@ -1,1 +1,1 @@
-from outscraper.api_client import *
+from outscraper.client import *
