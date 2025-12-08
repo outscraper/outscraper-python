@@ -22,7 +22,7 @@ class OutscraperClient(object):
         self._transport._requests_pause = requests_pause
 
     def _request(self, method: str, path: str, *, wait_async: bool = False, async_request: bool = False, use_handle_response: bool = True, **kwargs):
-        return self._transport.request(
+        return self._transport.api_request(
             method,
             path,
             wait_async=wait_async,
@@ -41,7 +41,7 @@ class OutscraperClient(object):
                             page_size (int): parameter specifies the number of items to return.
 
                     Returns:
-                            list: requests history
+                            tuple[list, bool]: (tasks, has_more)
 
             See: https://app.outscraper.com/api-docs#tag/Outscraper-Platform-UI/paths/~1tasks/get
         '''
@@ -65,7 +65,7 @@ class OutscraperClient(object):
 
     def get_requests_history(self, type: str = 'running', skip: int = 0, page_size: int = 25) -> list:
         '''
-            Fetch up to 100 of your last requests.
+            Fetch recent requests (up to 100, depending on page_size).
 
                 Parameters:
                     type (str): parameter allows you to filter requests by type (running/finished).
@@ -170,7 +170,7 @@ class OutscraperClient(object):
     def google_maps_search_v1(self, query: Union[list, str], limit: int = 500, extract_contacts: bool = False, drop_duplicates: bool = False,
         coordinates: str = None, language: str = 'en', region: str = None, fields: Union[list, str] = None) -> list:
         '''
-            Get Google Maps Data (old verison)
+            Get Google Maps Data (old version)
 
             Returns places from Google Maps based on a given search query (or many queries).
             The results from searches are the same as you would see by visiting a regular Google Maps site. However, in most cases, it's recommended to use locations inside queries (e.g., bars, NY, USA) as the IP addresses of Outscraper's servers might be located in different countries.
@@ -307,13 +307,13 @@ class OutscraperClient(object):
         coordinates: str = None, language: str = 'en', region: str = None, fields: Union[list, str] = None
     ) -> list:
         '''
-            Get Google Maps Reviews (old verison)
+            Get Google Maps Reviews (old version)
 
             Returns Google Maps reviews from places when using search queries (e.g., restaurants, Manhattan, NY, USA) or from a single place when using IDs or names (e.g., NoMad Restaurant, NY, USA, 0x886916e8bc273979:0x5141fcb11460b226, ChIJu7bMNFV-54gR-lrHScvPRX4).
             Places information will be returned as well in the case at least one review is found.
 
                     Parameters:
-                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
+                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a list allows multiple queries (up to 250) to be sent in one request and save on network latency time.
                             reviews_limit (int): parameter specifies the limit of reviews to extract from one place.
                             limit (str): parameter specifies the limit of places to take from one query search.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
@@ -510,10 +510,10 @@ class OutscraperClient(object):
                     query (list | str): Company domains, URLs (e.g., 'outscraper.com', ['tesla.com', 'microsoft.com']).
                     fields (list | str): Defines which fields to include in each returned item.
                         By default, all fields are returned.
-                    async_request (bool): The parameter defines the way you want to submit your task. It can be set to `False`
-                        to open an HTTP connection and keep it open until you got your results, or `True` (default)
-                        to just submit your requests to Outscraper and retrieve them later with the Request Results endpoint.
-                        Default: True.
+                    async_request (bool): The parameter defines the way you want to submit your task. It can be set to `True`
+                        to submit your requests to Outscraper and retrieve them later with the Request Results endpoint, or `False` (default)
+                        to open an HTTP connection and keep it open until you got your results.
+                        Default: False.
                     preferred_contacts (list | str): Contact roles you want to prioritize
                         (e.g., 'influencers', 'technical', ['decision makers', 'sales']).
                         Default: None.
@@ -1192,7 +1192,7 @@ class OutscraperClient(object):
         '''
             Trustpilot Search
 
-            Returns search resutls from Trustpilot.
+            Returns search results from Trustpilot.
 
                     Parameters:
                             query (list | str): Company or category to search on Trustpilot (e.g., real estate).
@@ -1297,7 +1297,7 @@ class OutscraperClient(object):
 
                     Parameters:
                             query (str | list): Business names (e.g., Apple Inc, Microsoft Corporation, Tesla Motors). It supports batching by sending arrays with up to 250 queries (e.g., query=text1&query=text2&query=text3). It allows multiple queries to be sent in one request and to save on network latency time
-                            fields (str): TThe parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields. Use &fields=query,name to return only the specific ones.
+                            fields (str): The parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields. Use &fields=query,name to return only the specific ones.
                             async_request (bool): defines the way you want to submit your task to Outscraper. It can be set to `False` to send a task and wait for the results, or `True` to submit a task and retrieve results later using a request ID with `get_request_archive`.
                             ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
                             webhook (str): defines the callback URL to which Outscraper will send a POST request with JSON once the task is finished.
