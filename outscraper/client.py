@@ -90,6 +90,26 @@ class OutscraperClient(object):
 
         raise Exception(f'Response status code: {response.status_code}')
 
+    def get_request_archive(self, request_id: str) -> dict:
+        '''
+            Fetch request data from the archive
+
+                Parameters:
+                    request_id (str): unique id for the request provided by ['id']
+
+                Returns:
+                    dict: result from the archive
+
+            See: https://app.outscraper.com/api-docs#tag/Requests/paths/~1requests~1{requestId}/get
+        '''
+
+        response = self._request('GET', f'/requests/{request_id}',  use_handle_response=False)
+
+        if 199 < response.status_code < 300:
+            return response.json()
+
+        raise Exception(f'Response status code: {response.status_code}')
+
     def google_search(self, query: Union[list, str], pages_per_query: int = 1, uule: str = None, language: str = 'en', region: str = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
     ) -> Union[list, dict]:
