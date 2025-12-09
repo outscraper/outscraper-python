@@ -25,9 +25,9 @@ Initialization
 
 .. code:: python
 
-   from outscraper import ApiClient
+   from outscraper import OutscraperClient
 
-   client = ApiClient(api_key='SECRET_API_KEY')
+   client = OutscraperClient(api_key='SECRET_API_KEY')
 
 `Link to the profile page to create the API
 key <https://app.outscraper.com/profile>`__

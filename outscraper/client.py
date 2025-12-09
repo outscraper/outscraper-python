@@ -1,33 +1,35 @@
 import requests
-from time import sleep
 from typing import Union, Tuple, Optional
 
+from .transport import OutscraperTransport
 from .utils import as_list, parse_fields, format_direction_queries
 
 
-class ApiClient(object):
-    '''Outscraper ApiClient - Python SDK that allows using Outscraper's services and Outscraper's API.
+class OutscraperClient(object):
+    '''OutscraperClient - Python SDK that allows using Outscraper's services and Outscraper's API.
     ```python
-    from outscraper import ApiClient
-    client = ApiClient(api_key='SECRET_API_KEY')
+    from outscraper import OutscraperClient
+    client = OutscraperClient(api_key='SECRET_API_KEY')
     maps_results = client.google_maps_search('restaurants brooklyn usa')
     search_results = client.google_search('bitcoin')
     ```
     https://github.com/outscraper/outscraper-python
     '''
 
-    _api_url = 'https://api.app.outscraper.com'
-    _api_headers = {}
-
-    _max_ttl = 60 * 60
-    _requests_pause = 5
 
     def __init__(self, api_key: str, requests_pause: int = 5) -> None:
-        self._api_headers = {
-            'X-API-KEY': api_key,
-            'client': f'Python SDK'
-        }
-        self._requests_pause = requests_pause
+        self._transport = OutscraperTransport(api_key=api_key)
+        self._transport._requests_pause = requests_pause
+
+    def _request(self, method: str, path: str, *, wait_async: bool = False, async_request: bool = False, use_handle_response: bool = True, **kwargs):
+        return self._transport.api_request(
+            method,
+            path,
+            wait_async=wait_async,
+            async_request=async_request,
+            use_handle_response=use_handle_response,
+            **kwargs,
+        )
 
     def get_tasks(self, query: str = '', last_id: str = '', page_size: int = 10) -> Tuple[list, bool]:
         '''
@@ -39,11 +41,17 @@ class ApiClient(object):
                             page_size (int): parameter specifies the number of items to return.
 
                     Returns:
-                            list: requests history
+                            tuple[list, bool]: (tasks, has_more)
 
             See: https://app.outscraper.com/api-docs#tag/Outscraper-Platform-UI/paths/~1tasks/get
         '''
-        response = requests.get(f'{self._api_url}/tasks?query={query}&lastId={last_id}&pageSize={page_size}', headers=self._api_headers)
+
+        params = {
+            'query': query,
+            'lastId': last_id,
+            'pageSize': page_size,
+        }
+        response: requests.Response = self._request('GET', '/tasks', use_handle_response=False, params=params)
 
         if 199 < response.status_code < 300:
             data = response.json()
@@ -57,19 +65,25 @@ class ApiClient(object):
 
     def get_requests_history(self, type: str = 'running', skip: int = 0, page_size: int = 25) -> list:
         '''
-            Fetch up to 100 of your last requests.
+            Fetch recent requests (up to 100, depending on page_size).
 
-                    Parameters:
-                            type (str): parameter allows you to filter requests by type (running/finished).
-                            skip (int): skip first N records. It's commonly used in pagination.
-                            page_size (int): parameter specifies the number of items to return.
+                Parameters:
+                    type (str): parameter allows you to filter requests by type (running/finished).
+                    skip (int): skip first N records. It's commonly used in pagination.
+                    page_size (int): parameter specifies the number of items to return.
 
-                    Returns:
-                            list: requests history
+                Returns:
+                        list: requests history
 
             See: https://app.outscraper.com/api-docs#tag/Requests/paths/~1requests/get
         '''
-        response = requests.get(f'{self._api_url}/requests?type={type}&skip={skip}&pageSize={page_size}', headers=self._api_headers)
+
+        params = {
+            'type': type,
+            'skip': skip,
+            'pageSize': page_size,
+        }
+        response: requests.Response = self._request('GET', '/requests', use_handle_response=False, params=params)
 
         if 199 < response.status_code < 300:
             return response.json()
@@ -78,58 +92,23 @@ class ApiClient(object):
 
     def get_request_archive(self, request_id: str) -> dict:
         '''
-            Fetch request data from archive
+            Fetch request data from the archive
 
                 Parameters:
-                    request_id (int): unique id for the request provided by ['id']
+                    request_id (str): unique id for the request provided by ['id']
 
                 Returns:
                     dict: result from the archive
 
             See: https://app.outscraper.com/api-docs#tag/Requests/paths/~1requests~1{requestId}/get
         '''
-        response = requests.get(f'{self._api_url}/requests/{request_id}')
+
+        response = self._request('GET', f'/requests/{request_id}',  use_handle_response=False)
 
         if 199 < response.status_code < 300:
             return response.json()
 
         raise Exception(f'Response status code: {response.status_code}')
-
-    def _handle_response(self, response: requests.models.Response, wait_async: bool = False, async_request: bool = False) -> Union[list, dict]:
-        if 199 < response.status_code < 300:
-            if response.json().get('error'):
-                error_message = response.json().get('errorMessage')
-                raise Exception(f'error: {error_message}')
-
-            if wait_async:
-                response_json = response.json()
-
-                if async_request:
-                    return response_json
-                else:
-                    return self._wait_request_archive(response_json['id']).get('data', [])
-            else:
-                return response.json().get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
-
-    def _wait_request_archive(self, request_id: str) -> dict:
-        ttl = self._max_ttl / self._requests_pause
-
-        while ttl > 0:
-            ttl -= 1
-
-            sleep(self._requests_pause)
-
-            try:
-                result = self.get_request_archive(request_id)
-            except:
-                sleep(self._requests_pause)
-                result = self.get_request_archive(request_id)
-
-            if result['status'] != 'Pending': return result
-
-        raise Exception('Timeout exceeded')
 
     def google_search(self, query: Union[list, str], pages_per_query: int = 1, uule: str = None, language: str = 'en', region: str = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -153,10 +132,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1google-search-v3/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or (len(queries) > 1 or pages_per_query > 1)
-
-        response = requests.get(f'{self._api_url}/google-search-v3', params={
+        params = {
             'query': queries,
             'pagesPerQuery': pages_per_query,
             'uule': uule,
@@ -166,9 +145,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/google-search-v3', wait_async=wait_async, async_request=async_request, params=params)
 
     def google_search_news(self, query: Union[list, str], pages_per_query: int = 1, uule: str = None, tbs: str = None, language: str = 'en',
         region: str = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -190,10 +169,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1google-search-news/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or (len(queries) > 1 or pages_per_query > 1)
-
-        response = requests.get(f'{self._api_url}/google-search-news', params={
+        params = {
             'query': queries,
             'pagesPerQuery': pages_per_query,
             'uule': uule,
@@ -204,14 +183,14 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/google-search-news', wait_async=wait_async, async_request=async_request, params=params)
 
     def google_maps_search_v1(self, query: Union[list, str], limit: int = 500, extract_contacts: bool = False, drop_duplicates: bool = False,
         coordinates: str = None, language: str = 'en', region: str = None, fields: Union[list, str] = None) -> list:
         '''
-            Get Google Maps Data (old verison)
+            Get Google Maps Data (old version)
 
             Returns places from Google Maps based on a given search query (or many queries).
             The results from searches are the same as you would see by visiting a regular Google Maps site. However, in most cases, it's recommended to use locations inside queries (e.g., bars, NY, USA) as the IP addresses of Outscraper's servers might be located in different countries.
@@ -232,7 +211,7 @@ class ApiClient(object):
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1search/get
         '''
 
-        response = requests.get(f'{self._api_url}/maps/search', params={
+        params = {
             'query': as_list(query),
             'coordinates': coordinates,
             'language': language,
@@ -241,12 +220,9 @@ class ApiClient(object):
             'extractContacts': extract_contacts,
             'dropDuplicates': drop_duplicates,
             'fields': parse_fields(fields),
-        }, headers=self._api_headers)
+        }
 
-        if 199 < response.status_code < 300:
-            return self._wait_request_archive(response.json()['id']).get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
+        return self._request('GET', '/maps/search', wait_async=True, params=params)
 
     def google_maps_search(self, query: Union[list, str], limit: int = 20, drop_duplicates: bool = False, language: str = 'en',
        region: Optional[str] = None, skip: int = 0, coordinates: str = '', enrichment: Optional[list] = None, fields: Union[list, str] = None,
@@ -283,7 +259,6 @@ class ApiClient(object):
         queries = as_list(query)
         queries_len = len(queries)
         wait_async = async_request or (queries_len > 10 and limit > 1) or queries_len > 50
-
         payload = {
             'query': queries,
             'language': language,
@@ -299,13 +274,7 @@ class ApiClient(object):
             'webhook': webhook,
         }
 
-        response = requests.post(
-            f'{self._api_url}/google-maps-search',
-            json=payload,
-            headers=self._api_headers
-        )
-
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('POST', '/google-maps-search', wait_async=wait_async, async_request=async_request, json=payload)
 
     def google_maps_directions(self, query: Union[list, str], departure_time: int = None, finish_time: int = None, interval: int = 60, travel_mode: str = 'best',
         language: str = 'en', region: str = None, fields: Union[list, str] = None, async_request: bool = False,
@@ -337,8 +306,7 @@ class ApiClient(object):
 
         queries = format_direction_queries(query)
         wait_async = async_request or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/maps/directions', params={
+        params = {
             'query': queries,
             'departure_time': departure_time,
             'interval': interval,
@@ -350,22 +318,22 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/maps/directions', wait_async=wait_async, async_request=async_request, params=params)
 
     def google_maps_reviews_v2(self, query: Union[list, str], reviews_limit: int = 100, limit: int = 1, sort: str = 'most_relevant',
         skip: int = 0, start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False,
         coordinates: str = None, language: str = 'en', region: str = None, fields: Union[list, str] = None
     ) -> list:
         '''
-            Get Google Maps Reviews (old verison)
+            Get Google Maps Reviews (old version)
 
             Returns Google Maps reviews from places when using search queries (e.g., restaurants, Manhattan, NY, USA) or from a single place when using IDs or names (e.g., NoMad Restaurant, NY, USA, 0x886916e8bc273979:0x5141fcb11460b226, ChIJu7bMNFV-54gR-lrHScvPRX4).
             Places information will be returned as well in the case at least one review is found.
 
                     Parameters:
-                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a lists allows multiple queries (up to 250) to be sent in one request and save on network latency time.
+                            query (list | str): parameter defines the query you want to search. You can use anything that you would use on a regular Google Maps site. Additionally, you can use google_id, place_id or urls to Google Maps places. Using a list allows multiple queries (up to 250) to be sent in one request and save on network latency time.
                             reviews_limit (int): parameter specifies the limit of reviews to extract from one place.
                             limit (str): parameter specifies the limit of places to take from one query search.
                             sort (str): parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
@@ -384,7 +352,8 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1reviews-v3/get
         '''
-        response = requests.get(f'{self._api_url}/maps/reviews-v2', params={
+
+        params = {
             'query': as_list(query),
             'reviewsLimit': reviews_limit,
             'limit': limit,
@@ -398,12 +367,9 @@ class ApiClient(object):
             'language': language,
             'region': region,
             'fields': parse_fields(fields),
-        }, headers=self._api_headers)
+        },
 
-        if 199 < response.status_code < 300:
-            return self._wait_request_archive(response.json()['id']).get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
+        return self._request('GET', '/maps/reviews-v2', wait_async=True, params=params)
 
     def google_maps_reviews(self, query: Union[list, str], reviews_limit: int = 10, limit: int = 1, sort: str = 'most_relevant',
         start: int = None, cutoff: int = None, cutoff_rating: int = None, ignore_empty: bool = False, language: str = 'en',
@@ -442,10 +408,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1reviews-v3/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or reviews_limit > 499 or reviews_limit == 0 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/maps/reviews-v3', params={
+        params = {
             'query': queries,
             'reviewsLimit': reviews_limit,
             'limit': limit,
@@ -463,9 +429,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/maps/reviews-v3', wait_async=wait_async, async_request=async_request, params=params)
 
     def google_maps_photos(self, query: Union[list, str], photosLimit: int = 100, limit: int = 1, tag: str = None, language: str = 'en',
         region: str = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -489,10 +455,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google/paths/~1maps~1photos-v3/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or photosLimit > 499 or photosLimit == 0 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/maps/photos-v3', params={
+        params = {
             'query': queries,
             'photosLimit': photosLimit,
             'limit': limit,
@@ -503,9 +469,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/maps/photos-v3', wait_async=wait_async, async_request=async_request, params=params)
 
     def google_maps_business_reviews(self, *args, **kwargs) -> list: # deprecated
         return self.google_maps_reviews(*args, **kwargs)
@@ -532,10 +498,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Google-Play/paths/~1google-play~1reviews/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or reviews_limit > 499 or reviews_limit == 0 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/google-play/reviews', params={
+        params = {
             'query': as_list(query),
             'limit': reviews_limit,
             'sort': sort,
@@ -546,13 +512,13 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/google-play/reviews', wait_async=wait_async, async_request=async_request, params=params)
 
-    def contacts_and_leads(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = True,
-       preferred_contacts: Optional[Union[list, str]] = None, contacts_per_company: int = 3, emails_per_contact: int = 1,
-       skip_contacts: int = 0, general_emails: bool = False, ui: bool = False, webhook: Optional[str] = None) -> list:
+    def contacts_and_leads(self, query: Union[list, str], preferred_contacts: Optional[Union[list, str]] = None, contacts_per_company: int = 3,
+       emails_per_contact: int = 1, skip_contacts: int = 0, general_emails: bool = False, fields: Union[list, str] = None,
+       async_request: bool = False, ui: bool = False, webhook: Optional[str] = None) -> list:
         '''
             Contacts and Leads Scraper
 
@@ -564,10 +530,10 @@ class ApiClient(object):
                     query (list | str): Company domains, URLs (e.g., 'outscraper.com', ['tesla.com', 'microsoft.com']).
                     fields (list | str): Defines which fields to include in each returned item.
                         By default, all fields are returned.
-                    async_request (bool): The parameter defines the way you want to submit your task. It can be set to `False`
-                        to open an HTTP connection and keep it open until you got your results, or `True` (default)
-                        to just submit your requests to Outscraper and retrieve them later with the Request Results endpoint.
-                        Default: True.
+                    async_request (bool): The parameter defines the way you want to submit your task. It can be set to `True`
+                        to submit your requests to Outscraper and retrieve them later with the Request Results endpoint, or `False` (default)
+                        to open an HTTP connection and keep it open until you got your results.
+                        Default: False.
                     preferred_contacts (list | str): Contact roles you want to prioritize
                         (e.g., 'influencers', 'technical', ['decision makers', 'sales']).
                         Default: None.
@@ -590,10 +556,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Email-Related/paths/~1contacts-and-leads/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or len(queries) > 1
-
-        response = requests.get(f'{self._api_url}/contacts-and-leads', params={
+        params = {
             'query': queries,
             'fields': parse_fields(fields),
             'async': wait_async,
@@ -604,12 +570,9 @@ class ApiClient(object):
             'general_emails': general_emails,
             'ui': ui,
             'webhook': webhook
-        }, headers=self._api_headers)
+        }
 
-        if 199 < response.status_code < 300:
-            return self._wait_request_archive(response.json()['id']).get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
+        return self._request('GET', '/contacts-and-leads', wait_async=wait_async, async_request=async_request, params=params)
 
     def emails_and_contacts(self, query: Union[list, str], fields: Union[list, str] = None) -> list:
         '''
@@ -624,15 +587,13 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Email-Related/paths/~1emails-and-contacts/get
         '''
-        response = requests.get(f'{self._api_url}/emails-and-contacts', params={
+
+        params = {
             'query': as_list(query),
             'fields': parse_fields(fields),
-        }, headers=self._api_headers)
+        }
 
-        if 199 < response.status_code < 300:
-            return self._wait_request_archive(response.json()['id']).get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
+        return self._request('GET', '/emails-and-contacts', wait_async=True, params=params)
 
     def phones_enricher(self, query: Union[list, str], fields: Union[list, str] = None) -> list:
         '''
@@ -647,15 +608,13 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Phone-Related/paths/~1phones-enricher/get
         '''
-        response = requests.get(f'{self._api_url}/phones-enricher', params={
+
+        params = {
             'query': as_list(query),
             'fields': parse_fields(fields),
-        }, headers=self._api_headers)
+        }
 
-        if 199 < response.status_code < 300:
-            return self._wait_request_archive(response.json()['id']).get('data', [])
-
-        raise Exception(f'Response status code: {response.status_code}')
+        return self._request('GET', '/phones-enricher', wait_async=True, params=params)
 
     def amazon_products(self, query: Union[list, str], limit: int = 24, domain: str = 'amazon.com', postal_code: str = '11201', fields: Union[list, str] = None, async_request: bool = False,
         ui: bool = None, webhook: str = None
@@ -680,10 +639,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Amazon/paths/~1amazon~1products-v2/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or (len(queries) > 1 and limit > 1)
-
-        response = requests.get(f'{self._api_url}/amazon/products-v2', params={
+        params = {
             'query': queries,
             'limit': limit,
             'domain': domain,
@@ -692,9 +651,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/amazon/products-v2', wait_async=wait_async, async_request=async_request, params=params)
 
     def amazon_reviews(self, query: Union[list, str], limit: int = 10, sort: str = 'helpful', filter_by_reviewer: str = 'all_reviews',
         filter_by_star: str = 'all_stars', domain: str = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -719,10 +678,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Amazon/paths/~1amazon~1reviews/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or (len(queries) > 1 and limit > 10)
-
-        response = requests.get(f'{self._api_url}/amazon/reviews', params={
+        params = {
             'query': queries,
             'limit': limit,
             'sort': sort,
@@ -733,9 +692,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/amazon/reviews', wait_async=wait_async, async_request=async_request, params=params)
 
     def yelp_search(self, query: Union[list, str], limit: int = 100,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -758,19 +717,19 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Others/paths/~1yelp-search/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/yelp-search', params={
+        params = {
             'query': queries,
             'limit': limit,
             'async': wait_async,
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/yelp-search', wait_async=wait_async, async_request=async_request, params=params)
 
     def yelp_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'relevance_desc', cutoff: int = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -795,10 +754,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Reviews-and-Comments/paths/~1yelp~1reviews/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or limit > 499 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/yelp/reviews', params={
+        params = {
             'query': queries,
             'limit': limit,
             'sort': sort,
@@ -807,9 +766,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/yelp/reviews', wait_async=wait_async, async_request=async_request, params=params)
 
     def tripadvisor_reviews(self, query: Union[list, str], limit: int = 100, cutoff: int = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -832,10 +791,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Reviews-and-Comments/paths/~1trustpilot~1reviews/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or limit > 499 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/tripadvisor/reviews', params={
+        params = {
             'query': queries,
             'limit': limit,
             'cutoff': cutoff,
@@ -843,9 +802,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/tripadvisor/reviews', wait_async=wait_async, async_request=async_request, params=params)
 
     def apple_store_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'mosthelpful', cutoff: int = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -871,8 +830,7 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or limit > 499 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/appstore/reviews', params={
+        params = {
             'query': queries,
             'limit': limit,
             'sort': sort,
@@ -881,9 +839,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/appstore/reviews', wait_async=wait_async, async_request=async_request, params=params)
 
     def youtube_comments(self, query: Union[list, str], per_query: int = 100, language: str = 'en', region: str = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -909,8 +867,7 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or per_query > 499 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/youtube-comments', params={
+        params = {
             'query': queries,
             'perQuery': per_query,
             'language': language,
@@ -919,9 +876,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/youtube-comments', wait_async=wait_async, async_request=async_request, params=params)
 
     def g2_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'g2_default', cutoff: int = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -947,8 +904,7 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or limit > 499 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/g2/reviews', params={
+        params = {
             'query': queries,
             'limit': limit,
             'sort': sort,
@@ -957,9 +913,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/g2/reviews', wait_async=wait_async, async_request=async_request, params=params)
 
     def trustpilot_reviews(self, query: Union[list, str], limit: int = 100, languages: str = 'default', sort: str = '',
         cutoff: int = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -986,8 +942,7 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or limit > 499 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/trustpilot/reviews', params={
+        params = {
             'query': queries,
             'limit': limit,
             'languages': languages,
@@ -997,9 +952,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/trustpilot/reviews', wait_async=wait_async, async_request=async_request, params=params)
 
     def glassdoor_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'DATE', cutoff: int = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
@@ -1025,8 +980,7 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or limit > 499 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/glassdoor/reviews', params={
+        params = {
             'query': queries,
             'limit': limit,
             'sort': sort,
@@ -1035,9 +989,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/glassdoor/reviews', wait_async=wait_async, async_request=async_request, params=params)
 
     def capterra_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'MOST_HELPFUL', cutoff: int = None,
         language: str = 'en', region: str = None, fields: Union[list, str] = None, async_request: bool = False,
@@ -1066,8 +1020,7 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or limit > 499 or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/capterra-reviews', params={
+        params = {
             'query': queries,
             'limit': limit,
             'sort': sort,
@@ -1078,9 +1031,9 @@ class ApiClient(object):
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/capterra-reviews', wait_async=wait_async, async_request=async_request, params=params)
 
     def geocoding(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None) -> list:
         '''
@@ -1101,16 +1054,15 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or len(queries) > 50
-
-        response = requests.get(f'{self._api_url}/geocoding', params={
+        params = {
             'query': queries,
             'async': wait_async,
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/geocoding', wait_async=wait_async, async_request=async_request, params=params)
 
     def reverse_geocoding(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None) -> list:
         '''
@@ -1131,16 +1083,15 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or len(queries) > 50
-
-        response = requests.get(f'{self._api_url}/reverse-geocoding', params={
+        params = {
             'query': queries,
             'async': wait_async,
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/reverse-geocoding', wait_async=wait_async, async_request=async_request, params=params)
 
     def whitepages_phones(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None) -> Union[list, dict]:
         '''
@@ -1160,18 +1111,18 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/WhitePages/paths/~1whitepages-phones/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or len(queries) > 1
-
-        response = requests.get(f'{self._api_url}/whitepages-phones', params={
+        params = {
             'query': queries,
             'async': wait_async,
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/whitepages-phones', wait_async=wait_async, async_request=async_request, params=params)
 
     def whitepages_addresses(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None) -> Union[list, dict]:
         '''
@@ -1191,18 +1142,18 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/WhitePages/paths/~1whitepages-addresses/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or len(queries) > 1
-
-        response = requests.get(f'{self._api_url}/whitepages-addresses', params={
+        params = {
             'query': queries,
             'async': wait_async,
             'fields': parse_fields(fields),
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/whitepages-addresses', wait_async=wait_async, async_request=async_request, params=params)
 
     def company_insights(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = False, enrichment: list = None)  -> Union[list, dict]:
         '''
@@ -1221,17 +1172,17 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Other-Services/paths/~1company-insights/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or len(queries) > 1
-
-        response = requests.get(f'{self._api_url}/company-insights', params={
+        params = {
             'query': queries,
             'fields': parse_fields(fields),
             'enrichment': as_list(enrichment) if enrichment else '',
             'async': wait_async,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/company-insights', wait_async=wait_async, async_request=async_request, params=params)
 
     def validate_emails(self, query: Union[list, str], async_request: bool = False) -> Union[list, dict]:
         '''
@@ -1250,19 +1201,18 @@ class ApiClient(object):
         '''
         queries = as_list(query)
         wait_async = async_request or len(queries) > 1
-
-        response = requests.get(f'{self._api_url}/email-validator', params={
+        params = {
             'query': queries,
             'async': wait_async,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, async_request, async_request)
+        return self._request('GET', '/email-validator', wait_async=wait_async, async_request=async_request, params=params)
 
     def trustpilot_search(self, query: Union[list, str], limit: int = 100, skip: int = 0, enrichment: list = None, fields: Union[list, str] = None,  async_request: bool = False, ui: bool = None, webhook: str = None) -> Union[list, dict]:
         '''
             Trustpilot Search
 
-            Returns search resutls from Trustpilot.
+            Returns search results from Trustpilot.
 
                     Parameters:
                             query (list | str): Company or category to search on Trustpilot (e.g., real estate).
@@ -1279,10 +1229,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Businesses-and-POI/paths/~1trustpilot~1search/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or len(queries) > 1
-
-        response = requests.get(f'{self._api_url}/trustpilot', params={
+        params = {
             'query': queries,
             'limit': limit,
             'skip': skip,
@@ -1291,9 +1241,9 @@ class ApiClient(object):
             'async': wait_async,
             'ui': ui,
             'webhook': webhook
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, async_request, async_request)
+        return self._request('GET', '/trustpilot', wait_async=wait_async, async_request=async_request, params=params)
 
     def trustpilot(self, query: Union[list, str], enrichment: list = None, fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None) -> Union[list, dict]:
         '''
@@ -1317,17 +1267,16 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or len(queries) > 1
-
-        response = requests.get(f'{self._api_url}/trustpilot', params={
+        params = {
             'query': queries,
             'enrichment': as_list(enrichment) if enrichment else '',
             'fields': parse_fields(fields),
             'async': wait_async,
             'ui': ui,
             'webhook': webhook
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, async_request)
+        return self._request('GET', '/trustpilot', wait_async=wait_async, async_request=async_request, params=params)
 
     def similarweb(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None) -> Union[list, dict]:
         '''
@@ -1350,16 +1299,15 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or len(queries) > 1
-
-        response = requests.get(f'{self._api_url}/similarweb', params={
+        params = {
             'query': queries,
             'fields': parse_fields(fields),
             'async': wait_async,
             'ui': ui,
             'webhook': webhook
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, async_request)
+        return self._request('GET', '/similarweb', wait_async=wait_async, async_request=async_request, params=params)
 
     def company_websites_finder(self, query: Union[list, str], fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None) -> Union[list, dict]:
         '''
@@ -1369,7 +1317,7 @@ class ApiClient(object):
 
                     Parameters:
                             query (str | list): Business names (e.g., Apple Inc, Microsoft Corporation, Tesla Motors). It supports batching by sending arrays with up to 250 queries (e.g., query=text1&query=text2&query=text3). It allows multiple queries to be sent in one request and to save on network latency time
-                            fields (str): TThe parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields. Use &fields=query,name to return only the specific ones.
+                            fields (str): The parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields. Use &fields=query,name to return only the specific ones.
                             async_request (bool): defines the way you want to submit your task to Outscraper. It can be set to `False` to send a task and wait for the results, or `True` to submit a task and retrieve results later using a request ID with `get_request_archive`.
                             ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
                             webhook (str): defines the callback URL to which Outscraper will send a POST request with JSON once the task is finished.
@@ -1382,16 +1330,15 @@ class ApiClient(object):
 
         queries = as_list(query)
         wait_async = async_request or len(queries) > 1
-
-        response = requests.get(f'{self._api_url}/company-website-finder', params={
+        params = {
             'query': queries,
             'fields': parse_fields(fields),
             'async': wait_async,
             'ui': ui,
             'webhook': webhook
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, async_request)
+        return self._request('GET', '/company-website-finder', wait_async=wait_async, async_request=async_request, params=params)
 
     def yellowpages_search(self, query: Union[list, str], location: str = 'New York, NY', limit: int = 100, region: str = None,
         enrichment: list = None, fields: Union[list, str] = None, async_request: bool = True, ui: bool = None, webhook: str = None
@@ -1417,10 +1364,10 @@ class ApiClient(object):
 
             See: https://app.outscraper.com/api-docs#tag/Others/paths/~1yellowpages-search/get
         '''
+
         queries = as_list(query)
         wait_async = async_request or len(queries) > 10
-
-        response = requests.get(f'{self._api_url}/yellowpages-search', params={
+        params = {
             'query': queries,
             'location': location,
             'limit': limit,
@@ -1430,6 +1377,6 @@ class ApiClient(object):
             'async': wait_async,
             'ui': ui,
             'webhook': webhook,
-        }, headers=self._api_headers)
+        }
 
-        return self._handle_response(response, wait_async, async_request)
+        return self._request('GET', '/yellowpages-search', wait_async=wait_async, async_request=async_request, params=params)

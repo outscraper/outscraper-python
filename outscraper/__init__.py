@@ -1,1 +1,8 @@
-from outscraper.api_client import *
+from .client import OutscraperClient
+
+ApiClient = OutscraperClient
+
+__all__ = [
+    'OutscraperClient',
+    'ApiClient',
+]
