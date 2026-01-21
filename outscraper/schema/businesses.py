@@ -102,6 +102,7 @@ class Page(Generic[T]):
     def cursor(self) -> Optional[str]:
         return self.next_cursor
 
+
 @dataclass
 class BusinessSearchResult(Page[Business]):
     pass

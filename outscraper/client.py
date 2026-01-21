@@ -1,13 +1,11 @@
+from __future__ import annotations
 from functools import cached_property
 
 import requests
-from typing import Union, Tuple, Optional, TYPE_CHECKING
+from typing import Union, Tuple, Optional
 
 from .transport import OutscraperTransport
 from .utils import as_list, parse_fields, format_direction_queries
-
-if TYPE_CHECKING:
-    from .businesses import BusinessesAPI
 
 
 class OutscraperClient(object):
