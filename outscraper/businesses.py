@@ -128,7 +128,7 @@ class BusinessesAPI:
                         If not provided, API returns all fields.
 
                 Returns:
-                        Business: Business object with full details (plus raw payload in Business.raw).
+                        Business: Business object with full details (plus extra payload in Business.extra).
 
             See: https://app.outscraper.com/api-docs
         '''

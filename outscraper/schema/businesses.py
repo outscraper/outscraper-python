@@ -65,28 +65,28 @@ class Business:
     photo: Optional[str] = None
     types: Optional[List[str]] = None
 
-    raw: Dict[str, Any] = field(default_factory=dict)
+    extra: Dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, data: dict) -> 'Business':
         allowed = {f.name for f in dc_fields(cls)}
-        known = {k: v for k, v in data.items() if k in allowed and k != 'raw'}
+        known = {k: v for k, v in data.items() if k in allowed and k != 'extra'}
         obj = cls(**known)
-        obj.raw = data
+        obj.extra = data
         return obj
 
-    def to_dict(self, *, include_raw: bool = True) -> Dict[str, Any]:
+    def to_dict(self, *, include_extra: bool = True) -> Dict[str, Any]:
         result: Dict[str, Any] = {}
 
         for f in dc_fields(self):
-            if f.name == 'raw':
+            if f.name == 'extra':
                 continue
             value = getattr(self, f.name)
             if value is not None:
                 result[f.name] = value
 
-        if include_raw:
-            for k, v in self.raw.items():
+        if include_extra:
+            for k, v in self.extra.items():
                 result.setdefault(k, v)
 
         return result
