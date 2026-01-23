@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Iterator, Optional, Union, Mapping, Any
 
-from .schema.businesses import Business, BusinessFilters, BusinessSearchResult
+from .schema.businesses import BusinessFilters, BusinessSearchResult
 
 
 FiltersLike = Union[BusinessFilters, Mapping[str, Any], None]
@@ -63,16 +63,14 @@ class BusinessesAPI:
             error_message = data.get('errorMessage')
             raise Exception(f'error: {error_message}')
 
-        items = [Business.from_dict(i) for i in (data.get('items') or [])]
-
         return BusinessSearchResult(
-            items=items,
+            items=data.get('items') or [],
             next_cursor=data.get('next_cursor'),
             has_more=bool(data.get('has_more')) or bool(data.get('next_cursor')),
         )
 
     def iter_search(self, *, filters: FiltersLike = None, limit: int = 10, start_cursor: Optional[str] = None,
-        include_total: bool = False, fields: Optional[list[str]] = None) -> Iterator[Business]:
+        include_total: bool = False, fields: Optional[list[str]] = None) -> Iterator[dict]:
         '''
             Iterate over businesses across all pages (auto-pagination).
 
@@ -91,7 +89,7 @@ class BusinessesAPI:
                     fields (list[str] | None): Passed to `search()`.
 
                 Yields:
-                        Business: Each business record from all pages.
+                        item (dict): Each business record from all pages.
 
             See: https://app.outscraper.com/api-docs
         '''
@@ -112,7 +110,7 @@ class BusinessesAPI:
 
             cursor = business_search_result.next_cursor
 
-    def get_details(self, business_id: str, *, fields: Optional[list[str]] = None) -> Business:
+    def get(self, business_id: str, *, fields: Optional[list[str]] = None) -> dict:
         '''
             Get Business Details
 
@@ -128,7 +126,7 @@ class BusinessesAPI:
                         If not provided, API returns all fields.
 
                 Returns:
-                        Business: Business object with full details (plus extra payload in Business.extra).
+                        data (dict): business with full details.
 
             See: https://app.outscraper.com/api-docs
         '''
@@ -146,4 +144,4 @@ class BusinessesAPI:
         if not isinstance(data, dict):
             raise Exception(f'Unexpected response for /businesses/{business_id}: {type(data)}')
 
-        return Business.from_dict(data)
+        return data

@@ -104,5 +104,5 @@ class Page(Generic[T]):
 
 
 @dataclass
-class BusinessSearchResult(Page[Business]):
+class BusinessSearchResult(Page[dict]):
     pass

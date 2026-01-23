@@ -23,16 +23,16 @@ client = OutscraperClient(api_key='SECRET_API_KEY')
 
 ```python
 # Get business details by Outscraper ID (os_id):
-business = client.businesses.get_details('os_id')
+business = client.businesses.get('os_id')
 
 # Get business details by Google Place ID:
-business = client.businesses.get_details('place_id')
+business = client.businesses.get('place_id')
 
 # Get business details by Google Business ID (google_id):
-business = client.businesses.get_details('google_id')
+business = client.businesses.get('google_id')
 
 # Request only specific fields (optional):
-business = client.businesses.get_details(
+business = client.businesses.get(
     'os_id',
     fields=['name', 'phone', 'website', 'address', 'rating', 'reviews']
 )
@@ -81,6 +81,32 @@ result = client.businesses.search(
     limit=50
 )
 
+# Collect search parameters in one json:
+json = {
+    'limit': 10,
+    'cursor': None,
+    'include_total': False,
+    'fields': ['name', 'types', 'address', 'state', 'postal_code', 'country', 'website', 'phone', 'rating', 'reviews', 'photo'],
+    'filters': {
+        "country_code": "US",
+        "states": [
+            "NY"
+        ],
+        "cities": [
+            "New York",
+            "Buffalo"
+        ],
+        "types": [
+            "restaurant",
+            "cafe"
+        ],
+        "has_website": True,
+        "has_phone": True,
+        "business_statuses": ["operational"],
+    }
+}
+result = client.businesses.search(**json)
+
 # Iterate over all results (auto-pagination)
 from outscraper.schema.businesses import BusinessFilters
 
@@ -92,8 +118,5 @@ for business in client.businesses.iter_search(
     fields=['name', 'phone', 'address', 'rating', 'reviews']
 ):
     # business is a Business dataclass instance
-    print(business.name, business.phone)
-
-    # full original payload is preserved here (if you need extra fields):
-    # business.extra.get('working_hours')
+    print(business)
 ```
