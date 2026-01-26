@@ -1,3 +1,6 @@
+from __future__ import annotations
+from functools import cached_property
+
 import requests
 from typing import Union, Tuple, Optional
 
@@ -17,13 +20,11 @@ class OutscraperClient(object):
     '''
 
 
-    def __init__(self, api_key: str, requests_pause: int = 5) -> None:
+    def __init__(self, api_key: str) -> None:
         self._transport = OutscraperTransport(api_key=api_key)
-        self._transport._requests_pause = requests_pause
 
     def _request(self, method: str, path: str, *, wait_async: bool = False, async_request: bool = False, use_handle_response: bool = True, **kwargs):
-        return self._transport.api_request(
-            method,
+        return self._transport.api_request(method,
             path,
             wait_async=wait_async,
             async_request=async_request,
@@ -35,13 +36,13 @@ class OutscraperClient(object):
         '''
             Fetch user UI tasks.
 
-                    Parameters:
-                            query (str): parameter specifies the search query (tag).
-                            last_id (str): parameter specifies the last task ID. It's commonly used in pagination.
-                            page_size (int): parameter specifies the number of items to return.
+                Parameters:
+                    query (str): parameter specifies the search query (tag).
+                    last_id (str): parameter specifies the last task ID. It's commonly used in pagination.
+                    page_size (int): parameter specifies the number of items to return.
 
-                    Returns:
-                            tuple[list, bool]: (tasks, has_more)
+                Returns:
+                        tuple[list, bool]: (tasks, has_more)
 
             See: https://app.outscraper.com/api-docs#tag/Outscraper-Platform-UI/paths/~1tasks/get
         '''
@@ -109,6 +110,11 @@ class OutscraperClient(object):
             return response.json()
 
         raise Exception(f'Response status code: {response.status_code}')
+
+    @cached_property
+    def businesses(self):
+        from .businesses import BusinessesAPI
+        return BusinessesAPI(self)
 
     def google_search(self, query: Union[list, str], pages_per_query: int = 1, uule: str = None, language: str = 'en', region: str = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
