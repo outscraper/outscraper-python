@@ -78,7 +78,6 @@ for query_reviews in results:
         print('title:', review.get('title'))
         print('date:', review.get('date'))
         print('review:', review.get('body'))
-        print('---')
 
 # 7) Async mode for background scraping (useful for larger jobs)
 task = client.amazon_reviews(
