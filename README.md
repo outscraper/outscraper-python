@@ -21,7 +21,7 @@ from outscraper import OutscraperClient
 
 client = OutscraperClient(api_key='SECRET_API_KEY')
 ```
-[Link to the profile page to create the API key](https://auth.outscraper.com/profile)
+[Link to the account page to create the API key](https://auth.outscraper.com/account/api)
 
 ## Scrape Google Search
 
