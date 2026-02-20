@@ -12,7 +12,7 @@ class BusinessesAPI:
         self._client = client
 
     def search(self, *, filters: FiltersLike = None, limit: int = 10, cursor: Optional[str] = None, include_total: bool = False,
-        fields: Optional[list[str]] = None) -> BusinessSearchResult:
+        fields: Optional[list[str]] = None, query: str = '') -> BusinessSearchResult:
         '''
             Retrieve business records with optional enrichment data.
 
@@ -30,6 +30,7 @@ class BusinessesAPI:
                     include_total (bool): Whether to include the total count of matching records in the response. This could increase response time.
                         Default: False.
                     fields (list[str] | None): List of fields to include in the response. If not specified, all fields will be returned.
+                    query (str): Natural language request parsed by AI into request parameters.
 
                 Returns:
                         BusinessSearchResult: Page of businesses with pagination info.
@@ -55,6 +56,9 @@ class BusinessesAPI:
         }
         if fields:
             payload['fields'] = list(fields)
+
+        if query:
+            payload['query'] = query
 
         response = self._client._request('POST', '/businesses', use_handle_response=False, json=payload)
         data = response.json()
