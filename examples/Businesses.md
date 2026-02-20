@@ -88,21 +88,21 @@ json = {
     'include_total': False,
     'fields': ['name', 'types', 'address', 'state', 'postal_code', 'country', 'website', 'phone', 'rating', 'reviews', 'photo'],
     'filters': {
-        "country_code": "US",
-        "states": [
-            "NY"
+        'country_code': 'US',
+        'states': [
+            'NY'
         ],
-        "cities": [
-            "New York",
-            "Buffalo"
+        'cities': [
+            'New York',
+            'Buffalo'
         ],
-        "types": [
-            "restaurant",
-            "cafe"
+        'types': [
+            'restaurant',
+            'cafe'
         ],
-        "has_website": True,
-        "has_phone": True,
-        "business_statuses": ["operational"],
+        'has_website': True,
+        'has_phone': True,
+        'business_statuses': ['operational'],
     }
 }
 result = client.businesses.search(**json)
@@ -119,4 +119,56 @@ for business in client.businesses.iter_search(
 ):
     # business is a Business dataclass instance
     print(business)
+
+```
+
+---
+
+## 🚀 AI-Powered Natural Language Search
+
+> [!IMPORTANT]
+> **Use plain English to search businesses.**
+>
+> You can now pass a `query` string, and AI will automatically convert it into structured `filters`, `fields`, and other search parameters.
+
+### AI-Powered Search (Plain Text)
+
+```python
+# Describe your request in plain English using the query parameter.
+result = client.businesses.search(
+    query=(
+        'Find restaurants and cafes in California and Illinois with rating 4.2+ and status operational. Return fields name, address, rating and reviews. Limit results to 15.'
+    )
+)
+
+for business in result.items:
+    print(business.name, business.rating)
+```
+
+### Combine JSON + Plain Text (Merge Rules)
+
+When you pass both `filters`/`fields` and `query`:
+
+- `filters` are merged
+- `fields` are merged
+- `limit`, `cursor`, and `include_total` come from plain text first (if present)
+
+```python
+result = client.businesses.search(
+    filters={
+        'country_code': 'US',
+        'states': ['CA'],
+        'types': ['restaurant']
+    },
+    fields=['name', 'phone'],
+    limit=15,
+    query=(
+        'Add cafes too. Return address and reviews. Limit 20. Include total.'
+    ),
+)
+
+# Result behavior:
+# - filters merged (types include restaurant + cafe, plus other JSON filters)
+# - fields merged (name, phone, address, reviews, ...)
+# - limit=20 and include_total=True are taken from plain text
 ```
