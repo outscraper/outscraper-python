@@ -30,7 +30,7 @@ class BusinessesAPI:
                     include_total (bool): Whether to include the total count of matching records in the response. This could increase response time.
                         Default: False.
                     fields (list[str] | None): List of fields to include in the response. If not specified, all fields will be returned.
-                    query (str): Natural language request parsed by AI into request parameters.
+                    query (str): natural language search.
 
                 Returns:
                         BusinessSearchResult: Page of businesses with pagination info.
