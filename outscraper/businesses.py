@@ -12,7 +12,9 @@ class BusinessesAPI:
         self._client = client
 
     def search(self, *, filters: FiltersLike = None, limit: int = 10, cursor: Optional[str] = None, include_total: bool = False,
-        fields: Optional[list[str]] = None, query: str = '') -> BusinessSearchResult:
+        fields: Optional[list[str]] = None, enrichments: Optional[list[str]] = None,
+        contacts_per_company: Optional[int] = None, emails_per_contact: Optional[int] = None,
+        query: str = '') -> BusinessSearchResult:
         '''
             Retrieve business records with optional enrichment data.
 
@@ -30,6 +32,14 @@ class BusinessesAPI:
                     include_total (bool): Whether to include the total count of matching records in the response. This could increase response time.
                         Default: False.
                     fields (list[str] | None): List of fields to include in the response. If not specified, all fields will be returned.
+                    enrichments (list[str] | None): Optional enrichments to apply.
+                        Supported values:
+                        - "contacts_n_leads"
+                        - "company_insights"
+                    contacts_per_company (int | None): Applies only when "contacts_n_leads" enrichment is enabled. If not provided,
+                        defaults to 3.
+                    emails_per_contact (int | None): Applies only when "contacts_n_leads" enrichment is enabled. If not provided,
+                        defaults to 1.
                     query (str): natural language search.
 
                 Returns:
@@ -40,6 +50,12 @@ class BusinessesAPI:
 
         if limit < 1 or limit > 1000:
             raise ValueError('limit must be in range [1, 1000]')
+
+        if contacts_per_company is not None and contacts_per_company < 1:
+            raise ValueError('contacts_per_company must be >= 1')
+
+        if emails_per_contact is not None and emails_per_contact < 1:
+            raise ValueError('emails_per_contact must be >= 1')
 
         if filters is None:
             filters_payload = {}
@@ -56,6 +72,18 @@ class BusinessesAPI:
         }
         if fields:
             payload['fields'] = list(fields)
+
+        if isinstance(enrichments, str):
+            enrichments = [enrichments]
+        enrichments_payload = list(enrichments) if enrichments else []
+        if enrichments_payload:
+            payload['enrichments'] = enrichments_payload
+
+        if 'contacts_n_leads' in enrichments_payload:
+            payload['contacts_per_company'] = contacts_per_company if contacts_per_company is not None else 3
+            payload['emails_per_contact'] = emails_per_contact if emails_per_contact is not None else 1
+        elif contacts_per_company is not None or emails_per_contact is not None:
+            raise ValueError('contacts_per_company and emails_per_contact require enrichments to include "contacts_n_leads"')
 
         if query:
             payload['query'] = query
@@ -74,7 +102,9 @@ class BusinessesAPI:
         )
 
     def iter_search(self, *, filters: FiltersLike = None, limit: int = 10, start_cursor: Optional[str] = None,
-        include_total: bool = False, fields: Optional[list[str]] = None) -> Iterator[dict]:
+        include_total: bool = False, fields: Optional[list[str]] = None,
+        enrichments: Optional[list[str]] = None, contacts_per_company: Optional[int] = None,
+        emails_per_contact: Optional[int] = None, query: str = '') -> Iterator[dict]:
         '''
             Iterate over businesses across all pages (auto-pagination).
 
@@ -91,6 +121,10 @@ class BusinessesAPI:
                     include_total (bool): Passed to `search()` (if supported by API).
                         Default: False.
                     fields (list[str] | None): Passed to `search()`.
+                    enrichments (list[str] | None): Passed to `search()`.
+                    contacts_per_company (int | None): Passed to `search()`.
+                    emails_per_contact (int | None): Passed to `search()`.
+                    query (str): Passed to `search()`.
 
                 Yields:
                         item (dict): Each business record from all pages.
@@ -105,7 +139,11 @@ class BusinessesAPI:
                 limit=limit,
                 cursor=cursor,
                 include_total=include_total,
-                fields=fields)
+                fields=fields,
+                enrichments=enrichments,
+                contacts_per_company=contacts_per_company,
+                emails_per_contact=emails_per_contact,
+                query=query)
 
             for item in business_search_result.items:
                 yield item
