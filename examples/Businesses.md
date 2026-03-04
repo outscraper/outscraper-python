@@ -69,6 +69,32 @@ result = client.businesses.search(
     ]
 )
 
+# Search with enrichments (recommended dict format):
+result = client.businesses.search(
+    filters=filters,
+    limit=25,
+    fields=['name', 'website', 'phone'],
+    enrichments={
+        'contacts_n_leads': {
+            'contacts_per_company': 3,
+            'emails_per_contact': 1,
+        },
+        'company_insights': {},
+    },
+)
+
+# Search with enrichments (list format):
+result = client.businesses.search(
+    filters=filters,
+    enrichments=['contacts_n_leads', 'company_insights'],
+)
+
+# Search with enrichments (single string format):
+result = client.businesses.search(
+    filters=filters,
+    enrichments='contacts_n_leads',
+)
+
 # Search with dict filters (alternative)
 result = client.businesses.search(
     filters={
@@ -87,6 +113,13 @@ json = {
     'cursor': None,
     'include_total': False,
     'fields': ['name', 'types', 'address', 'state', 'postal_code', 'country', 'website', 'phone', 'rating', 'reviews', 'photo'],
+    'enrichments': {
+        'contacts_n_leads': {
+            'contacts_per_company': 2,
+            'emails_per_contact': 1
+        },
+        'company_insights': {},
+    },
     'filters': {
         'country_code': 'US',
         'states': [
@@ -115,7 +148,13 @@ filters = BusinessFilters(country_code='US', states=['NY'], business_statuses=['
 for business in client.businesses.iter_search(
     filters=filters,
     limit=100,
-    fields=['name', 'phone', 'address', 'rating', 'reviews']
+    fields=['name', 'phone', 'address', 'rating', 'reviews'],
+    enrichments={
+        'contacts_n_leads': {
+            'contacts_per_company': 2,
+            'emails_per_contact': 1,
+        }
+    },
 ):
     # business is a Business dataclass instance
     print(business)
