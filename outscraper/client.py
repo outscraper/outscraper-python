@@ -560,7 +560,7 @@ class OutscraperClient(object):
                 Returns:
                     list|dict: JSON result
 
-            See: https://app.outscraper.com/api-docs#tag/Email-Related/paths/~1contacts-and-leads/get
+            See: https://app.outscraper.com/api-docs#tag/Email-Related/paths/~1leads-and-contacts/get
         '''
 
         queries = as_list(query)
@@ -578,7 +578,7 @@ class OutscraperClient(object):
             'webhook': webhook
         }
 
-        return self._request('GET', '/contacts-and-leads', wait_async=wait_async, async_request=async_request, params=params)
+        return self._request('GET', '/leads-and-contacts', wait_async=wait_async, async_request=async_request, params=params)
 
     def emails_and_contacts(self, query: Union[list, str], fields: Union[list, str] = None) -> list:
         '''
