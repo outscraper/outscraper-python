@@ -22,6 +22,6 @@ client = OutscraperClient(api_key='SECRET_API_KEY')
 ## Usage
 
 ```python
-# Search contacts from website:
-results = client.contacts_and_leads(['outscraper.com'])
+# Search leads and contacts from website:
+results = client.leads_and_contacts(['outscraper.com'])
 ```
