@@ -798,7 +798,7 @@ class OutscraperClient(object):
         return self._request('GET', '/yelp/reviews', wait_async=wait_async, async_request=async_request, params=params)
 
     def tripadvisor_reviews(self, query: Union[list, str], limit: int = 100, cutoff: int = None,
-        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
+        fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None, language: str = 'default',
     ) -> Union[list, dict]:
         '''
             Tripadvisor Reviews
@@ -812,17 +812,19 @@ class OutscraperClient(object):
                             async_request (bool): parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
                             ui (bool): parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`.
                             webhook (str): parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
+                            language (str): parameter specifies the language to use for the website. Defaults to "default" (the Tripadvisor domain language); use "all" for reviews in all languages, or a language code such as "ja" for a specific language.
 
                     Returns:
                             list|dict: JSON result
 
-            See: https://app.outscraper.com/api-docs#tag/Reviews-and-Comments/paths/~1trustpilot~1reviews/get
+            See: https://app.outscraper.com/api-docs#tag/Reviews-and-Comments/paths/~1tripadvisor-reviews/get
         '''
 
         queries = as_list(query)
         wait_async = async_request or limit > 499 or len(queries) > 10
         params = {
             'query': queries,
+            'language': language,
             'limit': limit,
             'cutoff': cutoff,
             'async': wait_async,
@@ -831,7 +833,7 @@ class OutscraperClient(object):
             'webhook': webhook,
         }
 
-        return self._request('GET', '/tripadvisor/reviews', wait_async=wait_async, async_request=async_request, params=params)
+        return self._request('GET', '/tripadvisor-reviews', wait_async=wait_async, async_request=async_request, params=params)
 
     def apple_store_reviews(self, query: Union[list, str], limit: int = 100, sort: str = 'mosthelpful', cutoff: int = None,
         fields: Union[list, str] = None, async_request: bool = False, ui: bool = None, webhook: str = None
